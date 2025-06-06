@@ -8,7 +8,7 @@ from utils.load_write_yaml import LoadWriteYaml
 from utils.open_can import OpenCan
 
 class LinkerHandApi:
-    def __init__(self, hand_type="left", hand_joint="L10", modbus = "None",can="can0"):  # Ubuntu:can0   win:PCAN_USBBUS1
+    def __init__(self, hand_type="left", hand_joint="L10", modbus = "None",can="can0"):
         self.last_position = []
         self.yaml = LoadWriteYaml()
         self.config = self.yaml.load_setting_yaml()
@@ -53,9 +53,9 @@ class LinkerHandApi:
         if sys.platform == "linux":
             self.open_can = OpenCan(load_yaml=self.yaml)
             self.open_can.open_can(self.can)
-            self.is_can = self.open_can.is_can_up_sysfs()
+            self.is_can = self.open_can.is_can_up_sysfs(interface=self.can)
             if not self.is_can:
-                ColorMsg(msg="CAN0 interface is not open", color="red")
+                ColorMsg(msg=f"{self.can} interface is not open", color="red")
                 sys.exit(1)
     
     # Five-finger movement
