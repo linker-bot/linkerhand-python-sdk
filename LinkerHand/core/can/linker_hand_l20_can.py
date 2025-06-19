@@ -81,21 +81,21 @@ class LinkerHandL20Can:
         self.receive_thread.daemon = True
         self.receive_thread.start()
 
-    def send_command(self, frame_property, data_list):
-        print("66666")
-        """
-        Send command to CAN bus
-        :param frame_property: Data frame property
-        :param data_list: Data payload
-        """
-        frame_property_value = int(frame_property.value) if hasattr(frame_property, 'value') else frame_property
-        data = [frame_property_value] + [int(val) for val in data_list]
-        msg = can.Message(arbitration_id=self.can_id, data=data, is_extended_id=False)
-        try:
-            self.bus.send(msg)
-            print(f"Message sent: ID={hex(self.can_id)}, Data={data}")
-        except can.CanError as e:
-            print(f"Failed to send message: {e}")
+    # def send_command(self, frame_property, data_list):
+    #     print("66666")
+    #     """
+    #     Send command to CAN bus
+    #     :param frame_property: Data frame property
+    #     :param data_list: Data payload
+    #     """
+    #     frame_property_value = int(frame_property.value) if hasattr(frame_property, 'value') else frame_property
+    #     data = [frame_property_value] + [int(val) for val in data_list]
+    #     msg = can.Message(arbitration_id=self.can_id, data=data, is_extended_id=False)
+    #     try:
+    #         self.bus.send(msg)
+    #         print(f"Message sent: ID={hex(self.can_id)}, Data={data}")
+    #     except can.CanError as e:
+    #         print(f"Failed to send message: {e}")
 
     def receive_response(self):
         """
@@ -121,7 +121,7 @@ class LinkerHandL20Can:
     def set_thumb_roll(self, angle):
         self.send_command(FrameProperty.JOINT_ROLL_R, angle)
 
-    def send_command(self, frame_property, data_list):
+    def send_command(self, frame_property, data_list,sleep=0.002):
         frame_property_value = int(frame_property.value) if hasattr(frame_property, 'value') else frame_property
         data = [frame_property_value] + [int(val) for val in data_list]
         
@@ -130,7 +130,7 @@ class LinkerHandL20Can:
             self.bus.send(msg)
         except can.CanError:
             print("Message NOT sent")
-        time.sleep(0.002)
+        time.sleep(sleep)
 
     def set_joint_pitch(self, frame, angles):
         self.send_command(frame, angles)

@@ -31,7 +31,7 @@ LINKER_HAND:  # 手部配置信息
     EXISTS: True # 是否存在右手
     TOUCH: True # 是否有压力传感器
     MODBUS: "None" # 通讯协议是否为485 默认None 当前支持RML(睿尔曼API2)
-    JOINT: L25 # 右手关节数量
+    JOINT: L10 # 右手关节数量
     NAME:  # 无论l10还是l20 joint name都是20个
       - joint71
       - joint72

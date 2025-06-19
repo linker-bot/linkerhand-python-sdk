@@ -240,11 +240,11 @@ class LinkerHandL7Can:
         return [self.xb1[1],self.xb2[1],self.xb3[1],self.xb4[1],self.xb5[1],0] # The last digit is palm, currently not available
     
     def get_matrix_touch(self):
-        self.send_frame(0xb1,[0xc6],sleep=0.015)
-        self.send_frame(0xb2,[0xc6],sleep=0.015)
-        self.send_frame(0xb3,[0xc6],sleep=0.015)
-        self.send_frame(0xb4,[0xc6],sleep=0.015)
-        self.send_frame(0xb5,[0xc6],sleep=0.015)
+        self.send_frame(0xb1,[0xc6],sleep=0.04)
+        self.send_frame(0xb2,[0xc6],sleep=0.04)
+        self.send_frame(0xb3,[0xc6],sleep=0.04)
+        self.send_frame(0xb4,[0xc6],sleep=0.04)
+        self.send_frame(0xb5,[0xc6],sleep=0.04)
 
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
 

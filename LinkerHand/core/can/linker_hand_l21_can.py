@@ -685,11 +685,11 @@ class LinkerHandL21Can:
             pass
 
     def get_matrix_touch(self):
-        self.send_command(0xb1,[0xc6],sleep_time=0.015)
-        self.send_command(0xb2,[0xc6],sleep_time=0.015)
-        self.send_command(0xb3,[0xc6],sleep_time=0.015)
-        self.send_command(0xb4,[0xc6],sleep_time=0.015)
-        self.send_command(0xb5,[0xc6],sleep_time=0.015)
+        self.send_command(0xb1,[0xc6],sleep_time=0.04)
+        self.send_command(0xb2,[0xc6],sleep_time=0.04)
+        self.send_command(0xb3,[0xc6],sleep_time=0.04)
+        self.send_command(0xb4,[0xc6],sleep_time=0.04)
+        self.send_command(0xb5,[0xc6],sleep_time=0.04)
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
 
     def get_current(self):
