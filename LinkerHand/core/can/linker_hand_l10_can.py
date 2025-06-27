@@ -73,7 +73,7 @@ class LinkerHandL10Can:
         if sys.platform == "linux":
             return can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
         elif sys.platform == "win32":
-            return can.interface.Bus(channel='PCAN_USBBUS1', interface='pcan', bitrate=baudrate)
+            return can.interface.Bus(channel=channel, interface='pcan', bitrate=baudrate)
         else:
             raise EnvironmentError("Unsupported platform for CAN interface")
 
@@ -256,9 +256,13 @@ class LinkerHandL10Can:
         return self.version
     def get_current_status(self):
         '''Get current joint status'''
-        # self.send_frame(0x01,[],sleep=0.005)
-        # self.send_frame(0x04,[],sleep=0.005)
-        return self.x01 + self.x04
+        state = self.x01 + self.x04
+        if len(state) < 10:
+            self.send_frame(0x01,[],sleep=0.005)
+            self.send_frame(0x04,[],sleep=0.005)
+            time.sleep(0.001)
+            state = self.x01 + self.x04
+        return state
     def get_speed(self):
         '''Get current speed'''
         # self.send_frame(0x05,[],sleep=0.005)
@@ -308,6 +312,7 @@ class LinkerHandL10Can:
         self.send_frame(0x02, [])
         time.sleep(0.002)
         self.send_frame(0x03,[])
+        time.sleep(0.002)
         #self.set_max_torque_limits(pressures=[0.0], type="get")
         #time.sleep(0.001)
         return self.x02+self.x03
@@ -316,9 +321,16 @@ class LinkerHandL10Can:
         '''Get motor fault'''
         self.get_motor_fault_code()
         return self.x35+self.x36
+    
     def get_current(self):
         '''Get current'''
-        return [None]*10
+        self.send_frame(0x02, [])
+        time.sleep(0.002)
+        self.send_frame(0x03,[])
+        #self.set_max_torque_limits(pressures=[0.0], type="get")
+        #time.sleep(0.001)
+        return self.x02+self.x03
+
     def close_can_interface(self):
         """Stop the CAN communication."""
         self.running = False
