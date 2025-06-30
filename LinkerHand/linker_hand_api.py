@@ -57,6 +57,8 @@ class LinkerHandApi:
             if not self.is_can:
                 ColorMsg(msg=f"{self.can} interface is not open", color="red")
                 sys.exit(1)
+        version = self.get_version()
+        ColorMsg(msg=f"Embedded:{version}", color="green")
     
     # Five-finger movement
     def finger_move(self, pose=[]):

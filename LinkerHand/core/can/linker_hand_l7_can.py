@@ -7,7 +7,7 @@ import numpy as np
 class LinkerHandL7Can:
     def __init__(self, can_id, can_channel='can0', baudrate=1000000):
         self.x01 = [0] * 7
-        self.x02 = [0] * 7
+        self.x02 = [-1] * 7
         self.x05 = [0] * 7
         self.x33 = [0] * 7
         self.xb0,self.xb1,self.xb2,self.xb3,self.xb4,self.xb5 = [-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5
@@ -48,7 +48,7 @@ class LinkerHandL7Can:
         if sys.platform == "linux":
             return can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
         elif sys.platform == "win32":
-            return can.interface.Bus(channel='PCAN_USBBUS1', interface='pcan', bitrate=baudrate)
+            return can.interface.Bus(channel=channel, interface='pcan', bitrate=baudrate)
         else:
             raise EnvironmentError("Unsupported platform for CAN interface")
 
@@ -199,12 +199,14 @@ class LinkerHandL7Can:
             elif frame_type == 0x64: # L7 version number
                 self.version = list(response_data)
 
+
     def get_version(self):
         self.send_frame(0x64, [],sleep=0.1)
         return self.version
 
     def get_current_status(self):
-        #self.send_frame(0x01, [],sleep=0.01)
+        if self.version[4] > 50:
+            self.send_frame(0x01, [],sleep=0.002)
         return self.x01
 
     def get_speed(self):
@@ -214,9 +216,11 @@ class LinkerHandL7Can:
         '''Not supported yet.'''
         return [-1] * 7
 
+
     def get_torque(self):
         '''Not supported yet.'''
-        return [-1] * 7
+        self.send_frame(0x2, [],sleep=0.01)
+        return self.x02
 
     def get_touch_type(self):
         '''Get touch type'''
