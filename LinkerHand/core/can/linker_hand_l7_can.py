@@ -214,7 +214,9 @@ class LinkerHandL7Can:
 
     def get_current(self):
         '''Not supported yet.'''
-        return [-1] * 7
+        self.send_frame(0x2, [],sleep=0.1)
+        return self.x02
+
 
 
     def get_torque(self):

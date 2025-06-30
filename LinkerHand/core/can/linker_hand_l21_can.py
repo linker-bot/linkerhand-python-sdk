@@ -152,7 +152,7 @@ class LinkerHandL21Can:
             )
         elif sys.platform == "win32":
             self.bus = can.interface.Bus(
-                channel='PCAN_USBBUS1', interface='pcan', bitrate=baudrate, 
+                channel=can_channel, interface='pcan', bitrate=baudrate, 
                 can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
             )
         else:
