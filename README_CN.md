@@ -64,7 +64,7 @@ MODBUS: "None" or "RML"
 
 &ensp;&ensp; __在运行之前, 请将 [setting.yaml](LinkerHand/config/setting.yaml) 的配置信息修改为您实际控制的灵巧手配置信息.__
 
-- #### [0000-gui_control](example/gui_control/gui_control.py) # python3 gui_control.py
+- #### [0000-gui_control](example/gui_control/gui_control.py) 
 - #### [0001-linker_hand_fast](example/L10/gesture/linker_hand_fast.py)
 - #### [0002-linker_hand_finger_bend](example/L10/gesture/linker_hand_finger_bend.py)
 - #### [0003-linker_hand_fist](example/L10/gesture/linker_hand_fist.py)

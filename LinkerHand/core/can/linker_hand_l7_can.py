@@ -2,10 +2,16 @@ import can
 import time, sys
 import threading
 import numpy as np
+from LinkerHand.utils.open_can import OpenCan
 
 
 class LinkerHandL7Can:
-    def __init__(self, can_id, can_channel='can0', baudrate=1000000):
+    def __init__(self, can_id, can_channel='can0', baudrate=1000000,yaml=""):
+        self.can_id = can_id
+        self.can_channel = can_channel
+        self.baudrate = baudrate
+        self.open_can = OpenCan(load_yaml=yaml)
+
         self.x01 = [0] * 7
         self.x02 = [-1] * 7
         self.x05 = [0] * 7
@@ -32,7 +38,6 @@ class LinkerHandL7Can:
         }
         # Fault codes
         self.x35 = [0] * 7, [0] * 7
-        self.can_id = can_id
         self.joint_angles = [0] * 10
         self.pressures = [200] * 7  # Default torque 200
         self.bus = self.init_can_bus(can_channel, baudrate)
@@ -45,12 +50,15 @@ class LinkerHandL7Can:
         self.receive_thread.start()
 
     def init_can_bus(self, channel, baudrate):
-        if sys.platform == "linux":
-            return can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
-        elif sys.platform == "win32":
-            return can.interface.Bus(channel=channel, interface='pcan', bitrate=baudrate)
-        else:
-            raise EnvironmentError("Unsupported platform for CAN interface")
+        try:
+            if sys.platform == "linux":
+                return can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
+            elif sys.platform == "win32":
+                return can.interface.Bus(channel=channel, interface='pcan', bitrate=baudrate)
+            else:
+                raise EnvironmentError("Unsupported platform for CAN interface")
+        except:
+            print("Please insert CAN device")
 
     def send_frame(self, frame_property, data_list,sleep=0.005):
         """Send a single CAN frame with specified properties and data."""
@@ -61,6 +69,14 @@ class LinkerHandL7Can:
             self.bus.send(msg)
         except can.CanError as e:
             print(f"Failed to send message: {e}")
+            self.open_can.open_can(self.can_channel)
+            time.sleep(1)
+            self.is_can = self.open_can.is_can_up_sysfs(interface=self.can_channel)
+            time.sleep(1)
+            if self.is_can:
+                self.bus = can.interface.Bus(channel=self.can_channel, interface="socketcan", bitrate=self.baudrate)
+            else:
+                print("Reconnecting CAN devices ....")
         time.sleep(sleep)
 
     def set_joint_positions(self, joint_angles):

@@ -4,6 +4,7 @@ import can
 import threading
 from enum import Enum
 import numpy as np
+from LinkerHand.utils.open_can import OpenCan
 
 class FrameProperty(Enum):
     INVALID_FRAME_PROPERTY = 0x00  # Invalid CAN frame property | No return
@@ -30,8 +31,12 @@ class FrameProperty(Enum):
 
 
 class LinkerHandL20Can:
-    def __init__(self, can_channel='can0', baudrate=1000000, can_id=0x28):
+    def __init__(self, can_channel='can0', baudrate=1000000, can_id=0x28,yaml=""):
         self.can_id = can_id
+        self.can_channel = can_channel
+        self.baudrate = baudrate
+        self.open_can = OpenCan(load_yaml=yaml)
+
         self.running = True
         self.x05, self.x06, self.x07 = [],[],[]
         # New pressure sensors
@@ -58,18 +63,21 @@ class LinkerHandL20Can:
         }
         
         # Initialize CAN bus according to operating system
-        if sys.platform == "linux":
-            self.bus = can.interface.Bus(
-                channel=can_channel, interface="socketcan", bitrate=baudrate, 
-                can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-            )
-        elif sys.platform == "win32":
-            self.bus = can.interface.Bus(
-                channel=can_channel, interface='pcan', bitrate=baudrate, 
-                can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-            )
-        else:
-            raise EnvironmentError("Unsupported platform for CAN interface")
+        try:
+            if sys.platform == "linux":
+                self.bus = can.interface.Bus(
+                    channel=can_channel, interface="socketcan", bitrate=baudrate, 
+                    can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
+                )
+            elif sys.platform == "win32":
+                self.bus = can.interface.Bus(
+                    channel=can_channel, interface='pcan', bitrate=baudrate, 
+                    can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
+                )
+            else:
+                raise EnvironmentError("Unsupported platform for CAN interface")
+        except:
+            print("Please insert CAN device")
 
         # Initialize data storage
         self.x01, self.x02, self.x03, self.x04 = [[0.0] * 5 for _ in range(4)]
@@ -108,6 +116,14 @@ class LinkerHandL20Can:
                     self.process_response(msg)
             except can.CanError as e:
                 print(f"Error receiving message: {e}")
+                self.open_can.open_can(self.can_channel)
+                time.sleep(1)
+                self.is_can = self.open_can.is_can_up_sysfs(interface=self.can_channel)
+                time.sleep(1)
+                if self.is_can:
+                    self.bus = can.interface.Bus(channel=self.can_channel, interface="socketcan", bitrate=self.baudrate)
+                else:
+                    print("Reconnecting CAN devices ....")
 
     def set_finger_base(self, angles):
         self.send_command(FrameProperty.JOINT_PITCH_R, angles)

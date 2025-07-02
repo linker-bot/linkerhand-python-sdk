@@ -4,6 +4,7 @@ import time, sys, os
 import threading
 import numpy as np
 from enum import Enum
+from LinkerHand.utils.open_can import OpenCan
 current_dir = os.path.dirname(os.path.abspath(__file__))
 target_dir = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(target_dir)
@@ -106,8 +107,12 @@ class FrameProperty(Enum):
     FINGER_TEMPERATURE = 0x84  # Finger joint temperatures
 
 class LinkerHandL21Can:
-    def __init__(self, can_channel='can0', baudrate=1000000, can_id=0x28):
+    def __init__(self, can_channel='can0', baudrate=1000000, can_id=0x28,yaml=""):
         self.can_id = can_id
+        self.can_channel = can_channel
+        self.baudrate = baudrate
+        self.open_can = OpenCan(load_yaml=yaml)
+
         self.running = True
         self.last_thumb_pos, self.last_index_pos,self.last_ring_pos,self.last_middle_pos, self.last_little_pos = None,None,None,None,None
         self.x01, self.x02, self.x03, self.x04,self.x05,self.x06,self.x07, self.x08,self.x09,self.x0A,self.x0B,self.x0C,self.x0D,self.x0E,self.speed = [],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
@@ -145,18 +150,21 @@ class LinkerHandL21Can:
             176: 11,
         }
         # Initialize CAN bus according to operating system
-        if sys.platform == "linux":
-            self.bus = can.interface.Bus(
-                channel=can_channel, interface="socketcan", bitrate=baudrate, 
-                can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-            )
-        elif sys.platform == "win32":
-            self.bus = can.interface.Bus(
-                channel=can_channel, interface='pcan', bitrate=baudrate, 
-                can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-            )
-        else:
-            raise EnvironmentError("Unsupported platform for CAN interface")
+        try:
+            if sys.platform == "linux":
+                self.bus = can.interface.Bus(
+                    channel=can_channel, interface="socketcan", bitrate=baudrate, 
+                    can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
+                )
+            elif sys.platform == "win32":
+                self.bus = can.interface.Bus(
+                    channel=can_channel, interface='pcan', bitrate=baudrate, 
+                    can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
+                )
+            else:
+                raise EnvironmentError("Unsupported platform for CAN interface")
+        except:
+            print("Please insert CAN device")
 
         # Start receive thread
         self.receive_thread = threading.Thread(target=self.receive_response)
@@ -176,6 +184,14 @@ class LinkerHandL21Can:
             self.bus.send(msg)
         except can.CanError as e:
             print(f"Failed to send message: {e}")
+            self.open_can.open_can(self.can_channel)
+            time.sleep(1)
+            self.is_can = self.open_can.is_can_up_sysfs(interface=self.can_channel)
+            time.sleep(1)
+            if self.is_can:
+                self.bus = can.interface.Bus(channel=self.can_channel, interface="socketcan", bitrate=self.baudrate)
+            else:
+                print("Reconnecting CAN devices ....")
         time.sleep(sleep_time)
 
     def receive_response(self):

@@ -23,7 +23,7 @@ class LinkerHandApi:
             self.hand_id = 0x27  # Right hand
         if self.hand_joint == "L7":
             from core.can.linker_hand_l7_can import LinkerHandL7Can
-            self.hand = LinkerHandL7Can(can_id=self.hand_id,can_channel=self.can)
+            self.hand = LinkerHandL7Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L10":
             #if self.config['LINKER_HAND']['LEFT_HAND']['MODBUS'] == "RML": 
             if modbus == "RML": # RML API2 485 protocol
@@ -39,16 +39,16 @@ class LinkerHandApi:
 
             else : # Default CAN protocol
                 from core.can.linker_hand_l10_can import LinkerHandL10Can
-                self.hand = LinkerHandL10Can(can_id=self.hand_id,can_channel=self.can)
+                self.hand = LinkerHandL10Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L20":
             from core.can.linker_hand_l20_can import LinkerHandL20Can
-            self.hand = LinkerHandL20Can(can_id=self.hand_id,can_channel=self.can)
+            self.hand = LinkerHandL20Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L21":
             from core.can.linker_hand_l21_can import LinkerHandL21Can
-            self.hand = LinkerHandL21Can(can_id=self.hand_id,can_channel=self.can)
+            self.hand = LinkerHandL21Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L25":
             from core.can.linker_hand_l25_can import LinkerHandL25Can
-            self.hand = LinkerHandL25Can(can_id=self.hand_id,can_channel=self.can)
+            self.hand = LinkerHandL25Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         # Open can0
         if sys.platform == "linux":
             self.open_can = OpenCan(load_yaml=self.yaml)
