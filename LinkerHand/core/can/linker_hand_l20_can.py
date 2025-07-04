@@ -38,7 +38,8 @@ class LinkerHandL20Can:
         self.open_can = OpenCan(load_yaml=yaml)
 
         self.running = True
-        self.x05, self.x06, self.x07 = [],[],[]
+        self.x05 = [255] * 5
+        self.x06, self.x07 = [],[]
         # New pressure sensors
         self.xb0,self.xb1,self.xb2,self.xb3,self.xb4,self.xb5 = [-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5
         
