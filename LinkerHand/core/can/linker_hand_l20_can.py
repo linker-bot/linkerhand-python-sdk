@@ -317,6 +317,8 @@ class LinkerHandL20Can:
         '''Get current motor torque, not supported for L20'''
         return [0] * 5
     def get_fault(self):
+        self.send_command(0x07,[])
+        time.sleep(0.01)
         return self.x07
     def get_temperature(self):
         '''Get motor temperature, not supported for L20'''
