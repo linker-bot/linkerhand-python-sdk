@@ -80,9 +80,9 @@ class LinkerHandL20Can:
             print("Please insert CAN device")
 
         # Initialize data storage
-        self.x01, self.x02, self.x03, self.x04 = [[0.0] * 5 for _ in range(4)]
+        self.x01, self.x02, self.x03, self.x04 = [[-1] * 5 for _ in range(4)]
         self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = \
-            [[0.0] * 5 for _ in range(4)]
+            [[-1] * 5 for _ in range(4)]
 
         # Start receive thread
         self.receive_thread = threading.Thread(target=self.receive_response)
