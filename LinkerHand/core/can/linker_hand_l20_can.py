@@ -335,7 +335,12 @@ class LinkerHandL20Can:
         if len(t) == 2:
             return 2
         else:
-            return -1
+            self.send_command(0x20,[],sleep=0.03)
+            time.sleep(0.01)
+            if self.normal_force[0] == -1:
+                return -1
+            else:
+                return 1
     
     def get_touch(self):
         '''Get touch data'''

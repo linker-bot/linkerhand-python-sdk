@@ -4,7 +4,7 @@ import time,sys,os
 import threading
 import numpy as np
 from enum import Enum
-from LinkerHand.utils.open_can import OpenCan
+from utils.open_can import OpenCan
 current_dir = os.path.dirname(os.path.abspath(__file__))
 target_dir = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(target_dir)

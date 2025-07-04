@@ -2,7 +2,7 @@ import can
 import time, sys
 import threading
 import numpy as np
-from LinkerHand.utils.open_can import OpenCan
+from utils.open_can import OpenCan
 
 
 class LinkerHandL7Can:
@@ -226,6 +226,7 @@ class LinkerHandL7Can:
         return self.x01
 
     def get_speed(self):
+        # self.send_frame(0x05, [],sleep=0.002)
         return self.x05
 
     def get_current(self):
@@ -250,7 +251,13 @@ class LinkerHandL7Can:
         if len(t) == 2:
             return 2
         else:
-            return -1
+            self.send_frame(0x20,[],sleep=0.03)
+            time.sleep(0.01)
+            if self.normal_force[0] == -1:
+                return -1
+            else:
+                return 1
+
 
     def get_touch(self):
         '''Get touch data'''

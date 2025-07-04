@@ -8,7 +8,7 @@ from utils.load_write_yaml import LoadWriteYaml
 from utils.open_can import OpenCan
 
 class LinkerHandApi:
-    def __init__(self, hand_type="left", hand_joint="L10", modbus = "None",can="can0"):  # Ubuntu:can0   win:PCAN_USBBUS1
+    def __init__(self, hand_type="left", hand_joint="L10", modbus = "None",can="PCAN_USBBUS1"):  # Ubuntu:can0   win:PCAN_USBBUS1
         self.last_position = []
         self.yaml = LoadWriteYaml()
         self.config = self.yaml.load_setting_yaml()
@@ -101,6 +101,13 @@ class LinkerHandApi:
     
     def set_speed(self, speed=[100]*5):
         '''# Set speed'''
+        has_non_int = any(not isinstance(x, int) for x in speed)
+        if has_non_int:
+            print("设置speed只能为Int类型", flush=True)
+            return
+        if len(speed) < 5:
+            print("数据长度不够,至少5个元素", flush=True)
+            return
         ColorMsg(msg=f"{self.hand_type} {self.hand_joint} set speed to {speed}", color="green")
         self.hand.set_speed(speed=speed)
     
@@ -110,6 +117,13 @@ class LinkerHandApi:
     
     def set_torque(self, torque=[180] * 5):
         '''Set maximum torque'''
+        has_non_int = any(not isinstance(x, int) for x in torque)
+        if has_non_int:
+            print("设置torque只能为Int类型", flush=True)
+            return
+        if len(torque) < 5:
+            print("数据长度不够,至少5个元素", flush=True)
+            return
         ColorMsg(msg=f"{self.hand_type} {self.hand_joint} set maximum torque to {torque}", color="green")
         return self.hand.set_torque(torque=torque)
     
@@ -141,17 +155,17 @@ class LinkerHandApi:
     def get_joint_speed(self):
         speed = []
         if self.hand_joint == "L7":
-            return speed
+            return self.hand.get_speed()
         elif self.hand_joint == "L10":
             speed = self.hand.get_speed()
-            return [speed[0], 255, speed[1], speed[2], speed[3], speed[4], 255, 255, 255, 255]
+            return speed
         elif self.hand_joint == "L20":
             speed = self.hand.get_speed()
             return [255, speed[1], speed[2], speed[3], speed[4], 255, 255, 255, 255, 255, speed[0], 255, 255, 255, 255, 255, 255, 255, 255, 255]
         elif self.hand_joint == "L21":
             return self.hand.get_speed()
         elif self.hand_joint == "L25":
-            return speed
+            return self.hand.get_speed()
 
     def get_touch_type(self):
         '''Get touch type'''
