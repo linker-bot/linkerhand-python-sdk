@@ -300,10 +300,10 @@ class LinkerHandL20Can:
         return [0] * 5
     def get_current_status(self):
         '''Get current finger joint status'''
-        self.send_command(0x01,[])
-        self.send_command(0x02,[])
-        self.send_command(0x03,[])
-        self.send_command(0x04,[])
+        self.send_command(0x01,[],sleep=0.01)
+        self.send_command(0x02,[],sleep=0.01)
+        self.send_command(0x03,[],sleep=0.01)
+        self.send_command(0x04,[],sleep=0.01)
         return self.x01 + self.x02 + self.x03 + self.x04
     def get_speed(self):
         '''Get current motor speed'''
