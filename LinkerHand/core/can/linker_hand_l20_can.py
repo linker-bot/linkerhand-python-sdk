@@ -78,7 +78,7 @@ class LinkerHandL20Can:
             else:
                 raise EnvironmentError("Unsupported platform for CAN interface")
         except:
-            print("Please insert CAN device")
+            print("Please insert CAN device",flush=True)
 
         # Initialize data storage
         self.x01, self.x02, self.x03, self.x04 = [[-1] * 5 for _ in range(4)]
@@ -86,6 +86,8 @@ class LinkerHandL20Can:
             [[-1] * 5 for _ in range(4)]
 
         # Start receive thread
+        self.get_touch_type()
+        time.sleep(0.1)
         self.receive_thread = threading.Thread(target=self.receive_response)
         self.receive_thread.daemon = True
         self.receive_thread.start()
@@ -116,15 +118,8 @@ class LinkerHandL20Can:
                 if msg:
                     self.process_response(msg)
             except can.CanError as e:
-                print(f"Error receiving message: {e}")
-                self.open_can.open_can(self.can_channel)
-                time.sleep(1)
-                self.is_can = self.open_can.is_can_up_sysfs(interface=self.can_channel)
-                time.sleep(1)
-                if self.is_can:
-                    self.bus = can.interface.Bus(channel=self.can_channel, interface="socketcan", bitrate=self.baudrate)
-                else:
-                    print("Reconnecting CAN devices ....")
+                print(f"Error receiving message666: {e}",flush=True)
+                
 
     def set_finger_base(self, angles):
         self.send_command(FrameProperty.JOINT_PITCH_NR, angles)
@@ -147,6 +142,14 @@ class LinkerHandL20Can:
             self.bus.send(msg)
         except can.CanError:
             print("Message NOT sent")
+            self.open_can.open_can(self.can_channel)
+            time.sleep(1)
+            self.is_can = self.open_can.is_can_up_sysfs(interface=self.can_channel)
+            time.sleep(1)
+            if self.is_can:
+                self.bus = can.interface.Bus(channel=self.can_channel, interface="socketcan", bitrate=self.baudrate)
+            else:
+                print("Reconnecting CAN devices ....",flush=True)
         time.sleep(sleep)
 
     def set_joint_pitch(self, frame, angles):
@@ -327,6 +330,7 @@ class LinkerHandL20Can:
     def clear_faults(self):
         '''Clear motor faults'''
         self.send_command(0x07, [1, 1, 1, 1, 1])
+
     def get_touch_type(self):
         '''Get touch type'''
         t = []
