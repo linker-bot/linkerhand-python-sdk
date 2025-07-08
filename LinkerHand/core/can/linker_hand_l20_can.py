@@ -329,21 +329,18 @@ class LinkerHandL20Can:
         self.send_command(0x07, [1, 1, 1, 1, 1])
     def get_touch_type(self):
         '''Get touch type'''
-        self.send_command(0xb0,[],sleep=0.03)
-        self.send_command(0xb1,[],sleep=0.03)
         t = []
         for i in range(3):
-            t = self.xb1
-            time.sleep(0.01)
-        if len(t) == 2:
+            self.send_command(0xb0,[],sleep=0.03)
+        if self.xb0 == [2]:
             return 2
+        elif self.xb0 == [1]:
+            return 1
         else:
             self.send_command(0x20,[],sleep=0.03)
             time.sleep(0.01)
             if self.normal_force[0] == -1:
                 return -1
-            else:
-                return 1
     
     def get_touch(self):
         '''Get touch data'''
