@@ -18,7 +18,8 @@ You can run the examples after installing the requirements.txt. Only Python3 is 
 
 - Install  
 
-  ```bash  
+  ```bash
+  sudo apt install python3-can
   pip3 install -r requirements.txt  
   ```  
 
