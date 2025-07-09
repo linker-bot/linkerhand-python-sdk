@@ -20,6 +20,7 @@ LinkerHand Python SDK
 - install
 
   ```bash
+  sudo apt install python3-can
   pip3 install -r requirements.txt
   ```
 
