@@ -1,4 +1,4 @@
-VERSION: 2.1.7 # 支持新传感器
+VERSION: 2.1.8 # 支持新传感器
 LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
     EXISTS: False # 是否存在左手
