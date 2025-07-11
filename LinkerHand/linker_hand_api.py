@@ -8,7 +8,7 @@ from utils.load_write_yaml import LoadWriteYaml
 from utils.open_can import OpenCan
 
 class LinkerHandApi:
-    def __init__(self, hand_type="left", hand_joint="L10", modbus = "None",can="PCAN_USBBUS1"):  # Ubuntu:can0   win:PCAN_USBBUS1
+    def __init__(self, hand_type="left", hand_joint="L10", modbus = "None",can="can0"):  # Ubuntu:can0   win:PCAN_USBBUS1
         self.last_position = []
         self.yaml = LoadWriteYaml()
         self.config = self.yaml.load_setting_yaml()

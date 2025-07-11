@@ -169,8 +169,7 @@ class MainWindow(QMainWindow):
         all_action = self.yaml.load_action_yaml(hand_type=self.hand_type,hand_joint=self.hand_joint)
         for index,pos in enumerate(all_action):
             if pos['ACTION_NAME'] == text:
-                #position = pos['POSITION']
-                position = [int(x) for x in pos['POSITION']]
+                position = pos['POSITION']
                 print(type(position))
         #print(f"动作名称:{text}, 动作数值:{action_pos}")
         # if text == self.la:

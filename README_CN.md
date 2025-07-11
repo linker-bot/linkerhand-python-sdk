@@ -20,7 +20,6 @@ LinkerHand Python SDK
 - install
 
   ```bash
-  sudo apt install python3-can
   pip3 install -r requirements.txt
   ```
 
@@ -34,6 +33,10 @@ MODBUS: "None" or "RML"
 [Linker Hand API for Python Document](doc/API-Reference.md)
 
 ## 更新说明
+
+- > ### release_2.1.8
+ - 1、修复偶发撞帧问题
+
 - > ### 2.1.4
   - 1、新增支持L21
   - 2、新增支持矩阵式压力传感器
