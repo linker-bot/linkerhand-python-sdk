@@ -212,16 +212,17 @@ class LinkerHandL21Can:
             l21_pose = self.joint_map(joint_ranges)
             # Use list comprehension to split the list into subarrays of 6 elements each
             chunks = [l21_pose[i:i+6] for i in range(0, 30, 6)]
-            self.send_command(FrameProperty.THUMB_POS, chunks[0])
-            time.sleep(0.001)
-            self.send_command(FrameProperty.INDEX_POS, chunks[1])
-            time.sleep(0.001)
-            self.send_command(FrameProperty.MIDDLE_POS, chunks[2])
-            time.sleep(0.001)
-            self.send_command(FrameProperty.RING_POS, chunks[3])
-            time.sleep(0.001)
-            self.send_command(FrameProperty.LITTLE_POS, chunks[4])
-            time.sleep(0.001)
+            for i in range(3):
+                self.send_command(FrameProperty.THUMB_POS, chunks[0])
+                time.sleep(0.001)
+                self.send_command(FrameProperty.INDEX_POS, chunks[1])
+                time.sleep(0.001)
+                self.send_command(FrameProperty.MIDDLE_POS, chunks[2])
+                time.sleep(0.001)
+                self.send_command(FrameProperty.RING_POS, chunks[3])
+                time.sleep(0.001)
+                self.send_command(FrameProperty.LITTLE_POS, chunks[4])
+                time.sleep(0.001)
 
     def set_joint_positions_by_topic(self, joint_ranges):
         if len(joint_ranges) == 25:
