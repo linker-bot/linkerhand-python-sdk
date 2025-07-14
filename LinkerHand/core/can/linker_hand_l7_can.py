@@ -221,8 +221,8 @@ class LinkerHandL7Can:
         return self.version
 
     def get_current_status(self):
-        if self.version[4] > 50:
-            self.send_frame(0x01, [],sleep=0.002)
+        #if self.version[4] > 50:
+        self.send_frame(0x01, [],sleep=0.003)
         return self.x01
 
     def get_speed(self):
