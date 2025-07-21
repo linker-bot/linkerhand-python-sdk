@@ -120,6 +120,7 @@ class LinkerHandL21Can:
         # Speed
         self.x49, self.x4a, self.x4b, self.x4c, self.x4d,self.xc1 = [],[],[],[],[],[]
         self.x41,self.x42,self.x43,self.x44,self.x45 = [],[],[],[],[]
+        self.x83 = [-1] * 5
         # Torque
         self.x51, self.x52, self.x53, self.x54,self.x55 = [],[],[],[],[]
         # Fault codes
@@ -488,6 +489,8 @@ class LinkerHandL21Can:
                 self.x64 = list(response_data)
             elif frame_type == 0x65:
                 self.x65 = list(response_data)
+            elif frame_type == 0x83:
+                self.x83 = list(response_data)
             elif frame_type == 0x90:
                 self.x90 = list(response_data)
             elif frame_type == 0x91:
@@ -748,6 +751,10 @@ class LinkerHandL21Can:
             "ring_finger_tip",
             "little_finger_tip"
         ]
+
+    def clear_faults(self):
+        '''Clear motor faults'''
+        self.send_command(0x83, [1, 1, 1, 1, 1])
 
     def close_can_interface(self):
         if self.bus:
