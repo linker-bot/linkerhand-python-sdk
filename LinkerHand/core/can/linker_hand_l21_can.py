@@ -754,7 +754,8 @@ class LinkerHandL21Can:
 
     def clear_faults(self):
         '''Clear motor faults'''
-        self.send_command(0x83, [1, 1, 1, 1, 1])
+        self.send_command(0x83, [1, 1, 1, 1, 1],sleep_time=0.003)
+        return self.x83
 
     def close_can_interface(self):
         if self.bus:
