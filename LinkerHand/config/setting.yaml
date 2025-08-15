@@ -1,4 +1,4 @@
-VERSION: 2.1.8 # 修复撞帧
+VERSION: 2.1.9 # 修复撞帧
 LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
     EXISTS: False # 是否存在左手

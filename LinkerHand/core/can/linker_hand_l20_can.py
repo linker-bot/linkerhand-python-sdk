@@ -308,6 +308,11 @@ class LinkerHandL20Can:
         self.send_command(0x03,[],sleep=0.01)
         self.send_command(0x04,[],sleep=0.01)
         return self.x01 + self.x02 + self.x03 + self.x04
+    
+    def get_current_pub_status(self):
+        time.sleep(0.01)
+        return self.x01 + self.x02 + self.x03 + self.x04
+
     def get_speed(self):
         '''Get current motor speed'''
         self.send_command(0x05, [0])
@@ -371,6 +376,10 @@ class LinkerHandL20Can:
     def get_force(self):
         '''Get pressure sensor data'''
         return [self.normal_force,self.tangential_force,self.tangential_force_dir,self.approach_inc]
+    
+    def show_fun_table(self):
+        pass
+
     def close_can_interface(self):
         if self.bus:
             self.bus.shutdown()  # Close CAN bus

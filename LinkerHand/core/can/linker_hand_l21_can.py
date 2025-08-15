@@ -587,6 +587,12 @@ class LinkerHandL21Can:
             l21_state = self.state_to_cmd(l21_state=state)
             return l21_state
         
+    def get_current_pub_status(self):
+        state= self.x41+ self.x42+ self.x43+ self.x44+ self.x45
+        if len(state) == 30:
+            l21_state = self.state_to_cmd(l21_state=state)
+            return l21_state
+        
     def get_current_state_topic(self):
         self.send_command(0x01,[])
         self.send_command(0x02,[])

@@ -21,20 +21,16 @@ class LinkerHandApi:
             self.hand_id = 0x28  # Left hand
         if self.hand_type == "right":
             self.hand_id = 0x27  # Right hand
+        if self.hand_joint.upper() == "O6":
+            from .core.can.linker_hand_o6_can import LinkerHandO6Can
+            self.hand = LinkerHandO6Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L7":
             from core.can.linker_hand_l7_can import LinkerHandL7Can
             self.hand = LinkerHandL7Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L10":
             #if self.config['LINKER_HAND']['LEFT_HAND']['MODBUS'] == "RML": 
             if modbus == "RML": # RML API2 485 protocol
-                #ColorMsg(msg="We are working hard to develop it ...", color="yellow")
-                #sys.exit(1)
-                # from Robotic_Arm.rm_robot_interface import RoboticArm, rm_thread_mode_e
                 from core.rml485.linker_hand_l10_485 import LinkerHandL10For485
-                # robot = RoboticArm(rm_thread_mode_e.RM_TRIPLE_MODE_E)
-                # arm = robot.rm_create_robot_arm("192.168.1.18", 8080)
-                # print(arm)
-                #self.hand = LinkerHandL10For485(ip="192.168.1.18",modbus_port=1,modbus_baudrate=115200,modbus_timeout=5)
                 self.hand = LinkerHandL10For485()
 
             else : # Default CAN protocol
@@ -57,8 +53,11 @@ class LinkerHandApi:
             if not self.is_can:
                 ColorMsg(msg=f"{self.can} interface is not open", color="red")
                 sys.exit(1)
-        version = self.get_version()
-        ColorMsg(msg=f"Embedded:{version}", color="green")
+        version = self.get_embedded_version()
+        if version == None or len(version) == 0:
+            ColorMsg(msg="Warning: Hardware version number not recognized, it is recommended to terminate the program and re insert USB to CAN conversion", color="yellow")
+        else:
+            ColorMsg(msg=f"Embedded:{version}", color="green")
     
     # Five-finger movement
     def finger_move(self, pose=[]):
@@ -66,16 +65,15 @@ class LinkerHandApi:
         Five-finger movement
         @params: pose list L7 len(7) | L10 len(10) | L20 len(20) | L25 len(25) 0~255
         '''
-        # if pose == self.last_position:
-        #     return
-        #ColorMsg(msg=f"Current LinkerHand is {self.hand_type} {self.hand_joint}, action sequence is {pose}", color="green")
         
-        if len(pose) == 0 or self.last_position == pose:
+        if len(pose) == 0:
             return
         if any(not isinstance(x, (int, float)) or x < 0 or x > 255 for x in pose):
             ColorMsg(msg=f"The numerical range cannot be less than 0 or greater than 255",color="red")
             return
-        if self.hand_joint == "L7" and len(pose) == 7:
+        if self.hand_joint == "O6" and len(pose) == 6:
+            self.hand.set_joint_positions(pose)
+        elif self.hand_joint == "L7" and len(pose) == 7:
             self.hand.set_joint_positions(pose)
         elif self.hand_joint == "L10" and len(pose) == 10:
             self.hand.set_joint_positions(pose)
@@ -114,11 +112,19 @@ class LinkerHandApi:
         if len(speed) < 5:
             print("数据长度不够,至少5个元素", flush=True)
             return
+        if self.hand_joint == "L7" and len(speed) < 7:
+            print("数据长度不够,至少7个元素", flush=True)
+            return
         ColorMsg(msg=f"{self.hand_type} {self.hand_joint} set speed to {speed}", color="green")
         self.hand.set_speed(speed=speed)
     
     def set_joint_speed(self, speed=[100]*5):
         '''Set speed by topic'''
+        if len(speed) == 0:
+            return
+        if any(not isinstance(x, (int, float)) or x < 10 or x > 255 for x in speed):
+            ColorMsg(msg=f"The numerical range cannot be less than 10 or greater than 255",color="red")
+            return
         self.hand.set_speed(speed=speed)
     
     def set_torque(self, torque=[180] * 5):
@@ -129,6 +135,9 @@ class LinkerHandApi:
             return
         if len(torque) < 5:
             print("数据长度不够,至少5个元素", flush=True)
+            return
+        if self.hand_joint == "L7" and len(torque) < 7:
+            print("数据长度不够,至少7个元素", flush=True)
             return
         ColorMsg(msg=f"{self.hand_type} {self.hand_joint} set maximum torque to {torque}", color="green")
         return self.hand.set_torque(torque=torque)
@@ -144,9 +153,8 @@ class LinkerHandApi:
         else:
             pass
 
-    def get_version(self):
-        '''Get version'''
-        
+    def get_embedded_version(self):
+        '''Get embedded version'''
         return self.hand.get_version()
     
     def get_current(self):
@@ -157,13 +165,18 @@ class LinkerHandApi:
         '''Get current joint state'''
         return self.hand.get_current_status()
     
+    def get_state_for_pub(self):
+        return self.hand.get_current_pub_status()
+    
     def get_speed(self):
         '''Get speed'''
         return self.hand.get_speed()
     
     def get_joint_speed(self):
         speed = []
-        if self.hand_joint == "L7":
+        if self.hand_joint.upper() == "O6":
+            return self.hand.get_speed()
+        elif self.hand_joint == "L7":
             return self.hand.get_speed()
         elif self.hand_joint == "L10":
             speed = self.hand.get_speed()
@@ -194,6 +207,9 @@ class LinkerHandApi:
     
     def get_matrix_touch(self):
         return self.hand.get_matrix_touch()
+    
+    def get_matrix_touch_v2(self):
+        return self.hand.get_matrix_touch_v2()
 
     def get_torque(self):
         '''Get current maximum torque'''
@@ -247,7 +263,8 @@ class LinkerHandApi:
     def arc_to_range_right(self,state,hand_joint):
         return arc_to_range_right(right_arc=state,hand_joint=hand_joint)
     
-
+    def show_fun_table(self):
+        self.hand.show_fun_table()
     def close_can(self):
         self.open_can.close_can0()                         
 

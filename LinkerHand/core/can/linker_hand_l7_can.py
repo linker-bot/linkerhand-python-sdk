@@ -3,6 +3,7 @@ import time, sys
 import threading
 import numpy as np
 from utils.open_can import OpenCan
+from utils.color_msg import ColorMsg
 
 
 class LinkerHandL7Can:
@@ -42,6 +43,7 @@ class LinkerHandL7Can:
         self.pressures = [200] * 7  # Default torque 200
         self.bus = self.init_can_bus(can_channel, baudrate)
         self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[0.0] * 7 for _ in range(4)]
+        self.is_lock = False
         self.version = None
         # Start the receiving thread
         self.running = True
@@ -58,7 +60,8 @@ class LinkerHandL7Can:
             else:
                 raise EnvironmentError("Unsupported platform for CAN interface")
         except:
-            print("Please insert CAN device")
+            #print("Please insert CAN device")
+            ColorMsg(msg="Warning: Please insert CAN device", color="red")
 
     def send_frame(self, frame_property, data_list,sleep=0.005):
         """Send a single CAN frame with specified properties and data."""
@@ -81,12 +84,14 @@ class LinkerHandL7Can:
 
     def set_joint_positions(self, joint_angles):
         """Set the positions of 10 joints (joint_angles: list of 10 values)."""
+        self.is_lock = True
         if len(joint_angles) > 7:
             self.joint_angles = joint_angles[:7]
         else:
             self.joint_angles = joint_angles
         # Send angle control in frames
-        self.send_frame(0x01, self.joint_angles)
+        self.send_frame(0x01, self.joint_angles, sleep=0.003)
+        self.is_lock = False
 
     def set_max_torque_limits(self, pressures, type="get"):
         """Set maximum torque limits."""
@@ -221,12 +226,17 @@ class LinkerHandL7Can:
         return self.version
 
     def get_current_status(self):
-        #if self.version[4] > 50:
-        self.send_frame(0x01, [],sleep=0.003)
+        if self.is_lock:
+            return self.x01
+        elif self.is_lock == False:
+            self.send_frame(0x01, [],sleep=0.003)
+            return self.x01
+        
+    def get_current_pub_status(self):
         return self.x01
 
     def get_speed(self):
-        # self.send_frame(0x05, [],sleep=0.002)
+        self.send_frame(0x05, [],sleep=0.003)
         return self.x05
 
     def get_current(self):
@@ -276,6 +286,14 @@ class LinkerHandL7Can:
         self.send_frame(0xb5,[0xc6],sleep=0.01)
 
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
+    
+    def get_matrix_touch_v2(self):
+        self.send_frame(0xb1,[0xc6],sleep=0.005)
+        self.send_frame(0xb2,[0xc6],sleep=0.005)
+        self.send_frame(0xb3,[0xc6],sleep=0.005)
+        self.send_frame(0xb4,[0xc6],sleep=0.005)
+        self.send_frame(0xb5,[0xc6],sleep=0.005)
+        return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
 
     def get_force(self):
         '''Get pressure.'''
@@ -290,6 +308,9 @@ class LinkerHandL7Can:
         '''Get faults.'''
         self.get_motor_fault_code()
         return self.x35
+    
+    def show_fun_table(self):
+        pass
 
     def close_can_interface(self):
         """Stop the CAN communication."""
