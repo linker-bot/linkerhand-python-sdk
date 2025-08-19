@@ -21,7 +21,7 @@ class LinkerHandApi:
             self.hand_id = 0x28  # Left hand
         if self.hand_type == "right":
             self.hand_id = 0x27  # Right hand
-        if self.hand_joint.upper() == "O6":
+        if self.hand_joint.upper() == "O6" or self.hand_joint == "L6":
             from .core.can.linker_hand_o6_can import LinkerHandO6Can
             self.hand = LinkerHandO6Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L7":
