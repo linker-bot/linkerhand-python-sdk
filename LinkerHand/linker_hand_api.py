@@ -71,7 +71,7 @@ class LinkerHandApi:
         if any(not isinstance(x, (int, float)) or x < 0 or x > 255 for x in pose):
             ColorMsg(msg=f"The numerical range cannot be less than 0 or greater than 255",color="red")
             return
-        if self.hand_joint == "O6" and len(pose) == 6:
+        if (self.hand_joint.upper() == "O6" or self.hand_joint.upper() == "L6") and len(pose) == 6:
             self.hand.set_joint_positions(pose)
         elif self.hand_joint == "L7" and len(pose) == 7:
             self.hand.set_joint_positions(pose)
@@ -139,6 +139,9 @@ class LinkerHandApi:
         if self.hand_joint == "L7" and len(torque) < 7:
             print("数据长度不够,至少7个元素", flush=True)
             return
+        if (self.hand_joint == "L6" or self.hand_joint == "O6") and len(torque) != 6:
+            print("L6 or O6数据长度错误,至少6个元素", flush=True)
+            return
         ColorMsg(msg=f"{self.hand_type} {self.hand_joint} set maximum torque to {torque}", color="green")
         return self.hand.set_torque(torque=torque)
     
@@ -174,7 +177,7 @@ class LinkerHandApi:
     
     def get_joint_speed(self):
         speed = []
-        if self.hand_joint.upper() == "O6":
+        if self.hand_joint.upper() == "O6" or self.hand_joint.upper() == "L6":
             return self.hand.get_speed()
         elif self.hand_joint == "L7":
             return self.hand.get_speed()
