@@ -1,0 +1,26 @@
+LEFT_HAND:
+- ACTION_NAME: 握拳
+  POSITION:
+  - 67
+  - 151
+  - 0
+  - 0
+  - 0
+  - 0
+- ACTION_NAME: 张开
+  POSITION:
+  - 255
+  - 179
+  - 255
+  - 255
+  - 255
+  - 255
+RIGHT_HAND:
+- ACTION_NAME: 张开
+  POSITION:
+  - 255
+  - 70
+  - 255
+  - 255
+  - 255
+  - 255
