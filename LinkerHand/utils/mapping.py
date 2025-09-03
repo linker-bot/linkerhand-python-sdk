@@ -1,4 +1,12 @@
-
+#---------------------------------------------------------------------------------------------------
+# L6 L
+l6_l_min = [0, 0, 0, 0, 0, 0]
+l6_l_max = [1.54, 0.53, 1.57, 1.57, 1.57, 1.57]
+l6_l_derict = [-1, -1, -1, -1, -1, -1]
+# L6 R
+l6_r_min = [0, 0, 0, 0, 0, 0]
+l6_r_max = [1.54, 0.53, 1.57, 1.57, 1.57, 1.57]
+l6_r_derict = [-1, -1, -1, -1, -1, -1]
 #---------------------------------------------------------------------------------------------------
 # L7 L OK
 l7_l_min = [0, 0, 0, 0, 0, 0, -0.52]
@@ -49,7 +57,12 @@ l25_r_derict = [-1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, 
 
 def range_to_arc_left(left_range,hand_joint):
     num=0
-    if hand_joint == "L7":
+    if hand_joint == "L6":
+        num = 6
+        l_min = l6_l_min
+        l_max = l6_l_max
+        l_derict = l6_l_derict
+    elif hand_joint == "L7":
         num = 7
         l_min = l7_l_min
         l_max = l7_l_max
@@ -85,7 +98,12 @@ def range_to_arc_left(left_range,hand_joint):
 
 def range_to_arc_right(right_range,hand_joint):
     num=0
-    if hand_joint == "L7":
+    if hand_joint == "L6":
+        num = 6
+        r_min = l6_r_min
+        r_max = l6_r_max
+        r_derict = l6_r_derict
+    elif hand_joint == "L7":
         num = 7
         r_min = l7_r_min
         r_max = l7_r_max

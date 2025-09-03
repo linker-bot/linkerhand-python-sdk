@@ -42,7 +42,7 @@ class LinkerHandL20Can:
         self.x06, self.x07 = [],[]
         # New pressure sensors
         self.xb0,self.xb1,self.xb2,self.xb3,self.xb4,self.xb5 = [-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5
-        
+        self.x09 = self.x0b = self.x0c = self.x0d = [-1] * 5
         self.thumb_matrix = np.full((12, 6), -1)
         self.index_matrix = np.full((12, 6), -1)
         self.middle_matrix = np.full((12, 6), -1)
@@ -217,6 +217,14 @@ class LinkerHandL20Can:
                 self.x06 = list(response_data)
             elif frame_type == 0x07:
                 self.x07 = list(response_data)
+            elif frame_type == 0x09:
+                self.x09 = list(response_data)
+            elif frame_type == 0x0B:
+                self.x0b = list(response_data)
+            elif frame_type == 0x0C:
+                self.x0c = list(response_data)
+            elif frame_type == 0x0D:
+                self.x0d = list(response_data)
             elif frame_type == 0x20:
                 d = list(response_data)
                 self.normal_force = [float(i) for i in d] 
@@ -329,9 +337,15 @@ class LinkerHandL20Can:
         self.send_command(0x07,[])
         time.sleep(0.01)
         return self.x07
+    
     def get_temperature(self):
-        '''Get motor temperature, not supported for L20'''
-        return [0]* 10
+        '''Get motor temperature'''
+        self.send_command(0x09,[])
+        self.send_command(0x0b,[])
+        self.send_command(0x0c,[])
+        self.send_command(0x0d,[])
+
+        return self.x09+self.x0b+self.x0c+self.x0d
     def clear_faults(self):
         '''Clear motor faults'''
         self.send_command(0x07, [1, 1, 1, 1, 1])

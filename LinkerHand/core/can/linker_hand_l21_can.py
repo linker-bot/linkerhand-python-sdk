@@ -613,8 +613,8 @@ class LinkerHandL21Can:
             l21_speed = self.state_to_cmd(l21_state=speed)
             return l21_speed
     
-    def get_finger_torque(self):
-        return self.finger_torque()
+    # def get_finger_torque(self):
+    #     return self.finger_torque()
     def get_fault(self):
         self.get_thumbn_fault()
         self.get_index_fault()
@@ -663,6 +663,7 @@ class LinkerHandL21Can:
     
     def get_torque(self):
         return self.get_finger_torque()
+    
     def get_thumb_touch(self):
         '''Get thumb tactile sensor data'''
         self.send_command(FrameProperty.THUMB_TOUCH,[],sleep_time=0.015)
