@@ -42,7 +42,7 @@ class LinkerHandL7Can:
         self.joint_angles = [0] * 10
         self.pressures = [200] * 7  # Default torque 200
         self.bus = self.init_can_bus(can_channel, baudrate)
-        self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[0.0] * 7 for _ in range(4)]
+        self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[-1] * 7 for _ in range(4)]
         self.is_lock = False
         self.version = None
         # Start the receiving thread

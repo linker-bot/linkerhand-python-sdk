@@ -71,7 +71,7 @@ class LinkerHandL10Can:
         self.joint_angles = [0] * 10
         self.pressures = [200] * 5  # Default torque 200
         self.bus = self.init_can_bus(can_channel, baudrate)
-        self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[0.0] * 5 for _ in range(4)]
+        self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[-1] * 5 for _ in range(4)]
         self.version = None
         # Start receiving thread
         self.running = True
@@ -150,6 +150,8 @@ class LinkerHandL10Can:
                 time.sleep(0.01)
                 self.send_frame(0x05, speed[:5])
                 self.send_frame(0x06, speed[5:])
+        else:
+            raise ValueError("Speed list must have 10 elements.")
     def request_all_status(self):
         """Get all joint positions and pressures."""
         self.send_frame(FrameProperty.REQUEST_DATA_RETURN, [])

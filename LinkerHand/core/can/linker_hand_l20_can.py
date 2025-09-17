@@ -299,6 +299,9 @@ class LinkerHandL20Can:
         self.set_finger_base(finger_base) # Finger base movement
         self.set_finger_middle(yaw_angles) # Yaw movement
     def set_speed(self, speed=[]):
+        if len(speed) != 5:
+            raise ValueError("Speed list must have 5 elements.")
+            return
         self.send_command(0x05,speed)
     def set_torque(self, torque=[]):
         '''Set torque, not supported for L20'''

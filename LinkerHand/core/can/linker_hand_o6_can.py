@@ -44,7 +44,7 @@ class LinkerHandO6Can:
         self.joint_angles = [0] * 6
         self.pressures = [200] * 6  # Default torque 200
         self.bus = self.init_can_bus(can_channel, baudrate)
-        self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[0.0] * 6 for _ in range(4)]
+        self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[-1] * 6 for _ in range(4)]
         self.is_lock = False
         self.version = None
         # Start the receiving thread
@@ -86,14 +86,12 @@ class LinkerHandO6Can:
 
     def set_joint_positions(self, joint_angles):
         """Set the positions of 10 joints (joint_angles: list of 10 values)."""
-        self.is_lock = True
         if len(joint_angles) > 6:
             self.joint_angles = joint_angles[:6]
         else:
             self.joint_angles = joint_angles
         # Send angle control in frames
         self.send_frame(0x01, self.joint_angles, sleep=0.003)
-        self.is_lock = False
 
     def set_max_torque_limits(self, pressures, type="get"):
         """Set maximum torque limits."""
@@ -221,18 +219,21 @@ class LinkerHandO6Can:
                         self.little_matrix[index] = d[1:]  # Remove the first flag bit
             elif frame_type == 0x64: # O6 version number
                 self.version = list(response_data)
+            elif frame_type == 0xC2: # O6 version number
+                self.version = list(response_data)
 
 
     def get_version(self):
         self.send_frame(0x64, [],sleep=0.1)
+        time.sleep(0.1)
+        if self.version is None:
+            self.send_frame(0xC2, [],sleep=0.1)
+            time.sleep(0.1)
         return self.version
 
     def get_current_status(self):
-        if self.is_lock:
-            return self.x01
-        elif self.is_lock == False:
-            self.send_frame(0x01, [],sleep=0.003)
-            return self.x01
+        self.send_frame(0x01, [],sleep=0.005)
+        return self.x01
         
     def get_current_pub_status(self):
         return self.x01
@@ -290,11 +291,11 @@ class LinkerHandO6Can:
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
     
     def get_matrix_touch_v2(self):
-        self.send_frame(0xb1,[0xc6],sleep=0.006)
-        self.send_frame(0xb2,[0xc6],sleep=0.006)
-        self.send_frame(0xb3,[0xc6],sleep=0.006)
-        self.send_frame(0xb4,[0xc6],sleep=0.006)
-        self.send_frame(0xb5,[0xc6],sleep=0.006)
+        self.send_frame(0xb1,[0xc6],sleep=0.005)
+        self.send_frame(0xb2,[0xc6],sleep=0.005)
+        self.send_frame(0xb3,[0xc6],sleep=0.005)
+        self.send_frame(0xb4,[0xc6],sleep=0.005)
+        self.send_frame(0xb5,[0xc6],sleep=0.005)
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
 
     def get_force(self):
