@@ -14,7 +14,10 @@ LinkerHand Python SDK
 - download
 
   ```bash
-  git clone https://github.com/linkerbotai/linker_hand_python_sdk.git
+  # 开启CAN端口
+  $ sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 #USB转CAN设备蓝色灯常亮状态
+  
+  $ git clone https://github.com/linkerbotai/linker_hand_python_sdk.git
   ```
 
 - install
@@ -90,6 +93,7 @@ MODBUS: "None" or "RML"
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
