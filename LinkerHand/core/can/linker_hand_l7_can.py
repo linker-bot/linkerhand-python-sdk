@@ -219,10 +219,15 @@ class LinkerHandL7Can:
                         self.little_matrix[index] = d[1:]  # Remove the first flag bit
             elif frame_type == 0x64: # L7 version number
                 self.version = list(response_data)
-
+            elif frame_type == 0xC2: # O6 version number
+                self.version = list(response_data)
 
     def get_version(self):
-        self.send_frame(0x64, [],sleep=0.1)
+        self.send_frame(0x64, [], sleep=0.1)
+        time.sleep(0.1)
+        if self.version is None:
+            self.send_frame(0xC2, [], sleep=0.1)
+            time.sleep(0.1)
         return self.version
 
     def get_current_status(self):

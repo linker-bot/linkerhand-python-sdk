@@ -187,6 +187,8 @@ class LinkerHandL10Can:
     def process_response(self, msg):
         """Process received CAN messages."""
         if msg.arbitration_id == self.can_id:
+            if len(msg.data) == 0:
+                return
             frame_type = msg.data[0]
             response_data = msg.data[1:]
             if frame_type == FrameProperty.JOINT_POSITION_RCO.value:   # 0x01
@@ -269,6 +271,16 @@ class LinkerHandL10Can:
                         self.little_matrix[index] = d[1:]  # Remove the first flag bit
             elif frame_type == 0x64:
                 self.version =  list(response_data)
+            elif frame_type == 0xC2: # version number
+                self.version = list(response_data)
+
+    def get_version(self):
+        self.send_frame(0x64, [], sleep=0.1)
+        time.sleep(0.1)
+        if self.version is None:
+            self.send_frame(0xC2, [], sleep=0.1)
+            time.sleep(0.1)
+        return self.version
 
     def set_torque(self,torque=[]):
         '''Set maximum torque'''
@@ -280,10 +292,7 @@ class LinkerHandL10Can:
             self.send_frame(0x02, torque[:5])
             time.sleep(0.002)
             self.send_frame(0x03,torque[5:])
-    def get_version(self):
-        '''Get version'''
-        self.send_frame(0x64,[],sleep=0.1)
-        return self.version
+
     
     def get_current_status(self):
         '''Get current joint status'''
