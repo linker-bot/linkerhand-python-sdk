@@ -26,7 +26,7 @@ def set_speed(self,speed=[100,100,100,100,100]) # L7则要设置7个值
 
 ### 设置五根手指的转矩限制 - 力度
 ```python
-def set_torque(self, torque=[180,100,80,99,255]) # L7则要设置7个值
+def set_torque(self, torque=[180,100,80,99,255]) # L7则要设置7个值  L6\O6则为6个值
 ```
 **Description**:  
 设置手指的转矩限制或力度，用于控制抓取力度。  
