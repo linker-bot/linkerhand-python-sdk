@@ -63,6 +63,9 @@ class MainWindow(QMainWindow):
         elif self.hand_joint == "L25":
             self.add_button_position = [255] * 30 # 记录添加按钮的位置
             self.set_speed(speed=[60,250,250,250,250])
+        elif self.hand_joint.upper() == "O6" or self.hand_joint.upper() == "L6":
+            self.add_button_position = [255] * 6 # 记录添加按钮的位置
+            self.set_speed(speed=[200,250,250,250,250,250])
         
         
 
@@ -113,6 +116,9 @@ class MainWindow(QMainWindow):
             # L7
             self.init_pos = [250] * 7
             self.joint_name = ["大拇指弯曲", "大拇指横摆","食指弯曲", "中指弯曲", "无名指弯曲","小拇指弯曲","拇指旋转"]
+        elif self.hand_joint == "O6" or self.hand_joint == "L6":
+            self.init_pos = [250] * 6
+            self.joint_name=["大拇指弯曲", "大拇指横摆","食指弯曲", "中指弯曲", "无名指弯曲", "小拇指弯曲"]
         
     
     # 初始化窗口界面
