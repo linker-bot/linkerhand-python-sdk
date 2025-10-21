@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self._init_hand_joint()
-        self.api = LinkerHandApi(hand_joint=self.hand_joint,hand_type=self.hand_type)
+        self.api = LinkerHandApi(hand_joint=self.hand_joint,hand_type=self.hand_type,modbus=self.modbus_port)
         self.touch_type = -1
         self._init_gui_view()
         if self.hand_joint == "L7":
@@ -76,6 +76,7 @@ class MainWindow(QMainWindow):
         # 判断左手是否配置
         self.left_hand = False
         self.right_hand = False
+        self.modbus_port = "None"
         if self.setting['LINKER_HAND']['LEFT_HAND']['EXISTS'] == True:
             self.left_hand = True
         elif self.setting['LINKER_HAND']['RIGHT_HAND']['EXISTS'] == True:
@@ -88,11 +89,13 @@ class MainWindow(QMainWindow):
             print("左手")
             self.hand_exists = True
             self.hand_joint = self.setting['LINKER_HAND']['LEFT_HAND']['JOINT']
+            self.modbus_port = self.setting['LINKER_HAND']['LEFT_HAND']["MODBUS"]
             self.hand_type = "left"
         if self.right_hand == True:
             print("右手")
             self.hand_exists = True
             self.hand_joint = self.setting['LINKER_HAND']['RIGHT_HAND']['JOINT']
+            self.modbus_port = self.setting['RIGHT_HAND']['LEFT_HAND']["MODBUS"]
             self.hand_type = "right"
         
         self.init_pos = [255] * 10
@@ -197,6 +200,7 @@ class MainWindow(QMainWindow):
         slider_values_list = []
         for key in slider_values:
             slider_values_list.append(slider_values[key])
+        time.sleep(0.01)
         self.api.finger_move(pose=slider_values_list)
     # 更新滑动条状态
     def update_label(self, index, value):

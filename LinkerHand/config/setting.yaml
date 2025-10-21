@@ -1,10 +1,10 @@
 VERSION: 2.1.9 # 修复撞帧
 LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
-    EXISTS: False # 是否存在左手
-    TOUCH: True # 是否有压力传感器
-    MODBUS: "None" # 通讯协议是否为485 默认None 当前支持RML(睿尔曼API2)
-    JOINT: L10 # 左手关节数 O6/L6/L7/L10/L20/L21/L25/
+    EXISTS: True # 是否存在左手
+    TOUCH: False # 是否有压力传感器
+    MODBUS: "/dev/ttyUSB0" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB*
+    JOINT: O6 # 左手关节数 O6/L6/L7/L10/L20/L21/L25/
     NAME: # 无论l10还是l20 joint name都是20个
       - joint41
       - joint42
