@@ -278,6 +278,9 @@ class LinkerHandO6RS485:
     
     def get_state_for_pub(self) -> list:
         return self.get_state()
+
+    def get_current_status(self) -> list:
+        return self.get_state()
     
     def get_speed(self) -> list:
         """获取当前速度"""
