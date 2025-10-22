@@ -3,9 +3,9 @@ LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
     EXISTS: True # 是否存在左手
     TOUCH: False # 是否有压力传感器
-    MODBUS: "/dev/ttyUSB0" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB*
+    MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB*
     JOINT: O6 # 左手关节数 O6/L6/L7/L10/L20/L21/L25/
-    NAME: # 无论l10还是l20 joint name都是20个
+    NAME: # 默认值，不用修改
       - joint41
       - joint42
       - joint43
@@ -28,11 +28,11 @@ LINKER_HAND:  # 手部配置信息
       - joint60
     
   RIGHT_HAND:
-    EXISTS: True # 是否存在右手
+    EXISTS: False # 是否存在右手
     TOUCH: True # 是否有压力传感器
-    MODBUS: "None" # 通讯协议是否为485 默认None 当前支持RML(睿尔曼API2)
+    MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB*
     JOINT: O6 # 右手关节数量
-    NAME:  # 无论l10还是l20 joint name都是20个
+    NAME:  # 默认值，不用修改
       - joint71
       - joint72
       - joint73
@@ -53,4 +53,4 @@ LINKER_HAND:  # 手部配置信息
       - joint88
       - joint89
       - joint90
-PASSWORD: "12345678" # 由于与can通讯，需要激活通讯接口用到系统管理员密码。只有Linux系统需要，windows系统不需要
+PASSWORD: "12345678" # 由于与can通讯，需要激活通讯接口用到系统管理员密码。只有Linux系统需要，windows系统不需要。RS485不需要修改，RS485需要给/dev/ttyUSB* 777权限
