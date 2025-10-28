@@ -26,13 +26,12 @@ LinkerHand Python SDK
   pip3 install -r requirements.txt
   ```
 
-# CAN or RS485 协议切换 当前支持O6，其他型号灵巧手请参考MODBUS RS485协议文档
+# RS485 协议切换 当前支持O6，其他型号灵巧手请参考MODBUS RS485协议文档
 
 编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改,将MODBUS:"/dev/ttyUSB0"。USB-RS485转换器在Ubuntu上一般显示为/dev/ttyUSB* or /dev/ttyACM*
 MODBUS: "None" or "/dev/ttyUSB0"
 ```bash
-# 安装依赖
-$ pip3 install minimalmodbus pyserial
+# 确保requirements.txt安装依赖
 # 查看USB-RS485端口号
 $ ls /dev
 # 可以看到类似ttyUSB0端口后给端口执行权限
@@ -100,6 +99,7 @@ $ sudo chmod 777 /dev/ttyUSB0
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
