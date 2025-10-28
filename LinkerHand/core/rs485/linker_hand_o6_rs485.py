@@ -222,6 +222,7 @@ class LinkerHandO6RS485:
     # 固定函数
     # ----------------------------------------------------------
     def is_valid_6xuint8(self, lst) -> bool:
+        lst = [int(x) for x in lst]
         return (
             isinstance(lst, list) and
             len(lst) == 6 and
