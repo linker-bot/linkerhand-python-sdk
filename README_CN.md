@@ -32,6 +32,9 @@ LinkerHand Python SDK
 MODBUS: "None" or "/dev/ttyUSB0"
 ```bash
 # 确保requirements.txt安装依赖
+# 安装系统级相关驱动
+$ pip install minimalmodbus --break-system-packages
+$ pip install pyserial --break-system-packages
 # 查看USB-RS485端口号
 $ ls /dev
 # 可以看到类似ttyUSB0端口后给端口执行权限
@@ -99,6 +102,7 @@ $ sudo chmod 777 /dev/ttyUSB0
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
