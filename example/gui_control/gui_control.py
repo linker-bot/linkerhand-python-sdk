@@ -95,7 +95,7 @@ class MainWindow(QMainWindow):
             print("右手")
             self.hand_exists = True
             self.hand_joint = self.setting['LINKER_HAND']['RIGHT_HAND']['JOINT']
-            self.modbus_port = self.setting['RIGHT_HAND']['LEFT_HAND']["MODBUS"]
+            self.modbus_port = self.setting['LINKER_HAND']['RIGHT_HAND']["MODBUS"]
             self.hand_type = "right"
         
         self.init_pos = [255] * 10
