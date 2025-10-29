@@ -8,6 +8,8 @@ h5py
 PyYAML
 tqdm
 wandb
+PyQt5
+PyQt5-sip
 pyqtgraph
 dm_control
 matplotlib
