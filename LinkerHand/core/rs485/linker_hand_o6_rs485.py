@@ -115,16 +115,6 @@ class LinkerHandO6RS485:
     # ----------------------------------------------------------
     # 底层读写封装
     # ----------------------------------------------------------
-    # def _read_reg(self, addr: int) -> int:
-    #     """读单个输入寄存器（功能码 04）"""
-    #     return self.instr.read_register(addr, functioncode=4)
-
-    # def _write_reg(self, addr: int, value: int):
-    #     """写单个保持寄存器（功能码 16）"""
-    #     if not 0 <= value <= 255:
-    #         raise ValueError("value must be 0-255")
-    #     self.instr.write_register(addr, value, functioncode=16)
-
     def _bus_free(self):
         """保证距离上一帧 ≥ 30 ms"""
         elapse = time.perf_counter() - self._last_ts
@@ -241,12 +231,15 @@ class LinkerHandO6RS485:
     def set_speed(self, speed=[200] * 6):
         """设置速度 params: list len=6"""
         if self.is_valid_6xuint8(speed):
-            self.set_thumb_speed(speed[0])
-            self.set_thumb_yaw_speed(speed[1])
-            self.set_index_speed(speed[2])
-            self.set_middle_speed(speed[3])
-            self.set_ring_speed(speed[4])
-            self.set_little_speed(speed[5])
+            try:
+                self.set_thumb_speed(speed[0])
+                self.set_thumb_yaw_speed(speed[1])
+                self.set_index_speed(speed[2])
+                self.set_middle_speed(speed[3])
+                self.set_ring_speed(speed[4])
+                self.set_little_speed(speed[5])
+            except:
+                pass
     
     def set_torque(self, torque=[200] * 6):
         """设置扭矩 params: list len=6"""

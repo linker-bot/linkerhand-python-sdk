@@ -1,9 +1,9 @@
-VERSION: 2.2.2 # 修复撞帧
+VERSION: 2.2.3 # 修复撞帧
 LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
-    EXISTS: True # 是否存在左手
+    EXISTS: False # 是否存在左手
     TOUCH: False # 是否有压力传感器
-    MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB*
+    MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB* 当前只支持O6.后续版本正在努力增加中
     JOINT: O6 # 左手关节数 O6/L6/L7/L10/L20/L21/L25/
     NAME: # 默认值，不用修改
       - joint41
@@ -28,10 +28,10 @@ LINKER_HAND:  # 手部配置信息
       - joint60
     
   RIGHT_HAND:
-    EXISTS: False # 是否存在右手
+    EXISTS: True # 是否存在右手
     TOUCH: True # 是否有压力传感器
-    MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB*
-    JOINT: O6 # 右手关节数量
+    MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB* 当前只支持O6.后续版本正在努力增加中
+    JOINT: L6 # 右手关节数量
     NAME:  # 默认值，不用修改
       - joint71
       - joint72

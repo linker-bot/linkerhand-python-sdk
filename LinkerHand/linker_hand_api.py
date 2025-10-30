@@ -21,13 +21,21 @@ class LinkerHandApi:
             self.hand_id = 0x28  # Left hand
         if self.hand_type == "right":
             self.hand_id = 0x27  # Right hand
-        if self.hand_joint.upper() == "O6" or self.hand_joint == "L6" or self.hand_joint == "L6P":
+        if self.hand_joint.upper() == "O6":
             if modbus != "None":
                 from core.rs485.linker_hand_o6_rs485 import LinkerHandO6RS485
                 self.hand = LinkerHandO6RS485(hand_id=self.hand_id,modbus_port=modbus,baudrate=115200)
             else:
                 from core.can.linker_hand_o6_can import LinkerHandO6Can
                 self.hand = LinkerHandO6Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
+        if self.hand_joint.upper() == "L6":
+            if modbus != "None":
+                from core.rs485.linker_hand_l6_rs485 import LinkerHandL6RS485
+                self.hand = LinkerHandL6RS485(hand_id=self.hand_id,modbus_port=modbus,baudrate=115200)
+            else:
+                from core.can.linker_hand_o6_can import LinkerHandO6Can
+                self.hand = LinkerHandO6Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
+        time.sleep(1)
         if self.hand_joint == "L7":
             from core.can.linker_hand_l7_can import LinkerHandL7Can
             self.hand = LinkerHandL7Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
@@ -69,6 +77,7 @@ class LinkerHandApi:
         if any(not isinstance(x, (int, float)) or x < 0 or x > 255 for x in pose):
             ColorMsg(msg=f"The numerical range cannot be less than 0 or greater than 255",color="red")
             return
+        pose = [int(x) for x in pose]
         if (self.hand_joint.upper() == "O6" or self.hand_joint.upper() == "L6" or self.hand_joint.upper() == "L6P") and len(pose) == 6:
             self.hand.set_joint_positions(pose)
         elif self.hand_joint == "L7" and len(pose) == 7:
@@ -113,6 +122,7 @@ class LinkerHandApi:
         if self.hand_joint == "L7" and len(speed) < 7:
             print("数据长度不够,至少7个元素", flush=True)
             return
+        speed = [int(x) for x in speed]
         ColorMsg(msg=f"{self.hand_type} {self.hand_joint} set speed to {speed}", color="green")
         self.hand.set_speed(speed=speed)
     
@@ -123,6 +133,7 @@ class LinkerHandApi:
         if any(not isinstance(x, (int, float)) or x < 10 or x > 255 for x in speed):
             ColorMsg(msg=f"The numerical range cannot be less than 10 or greater than 255",color="red")
             return
+        speed = [int(x) for x in speed]
         self.hand.set_speed(speed=speed)
     
     def set_torque(self, torque=[180] * 5):
@@ -140,6 +151,7 @@ class LinkerHandApi:
         if (self.hand_joint == "L6" or self.hand_joint == "O6" or self.hand_joint.upper() == "L6P") and len(torque) != 6:
             print("L6 or O6数据长度错误,至少6个元素", flush=True)
             return
+        torque = [int(x) for x in torque]
         ColorMsg(msg=f"{self.hand_type} {self.hand_joint} set maximum torque to {torque}", color="green")
         return self.hand.set_torque(torque=torque)
     
@@ -149,6 +161,7 @@ class LinkerHandApi:
         if any(not isinstance(x, (int, float)) or x < 0 or x > 255 for x in current):
             print("Set Current The numerical range can only be positive integers or floating-point numbers between 0 and 255", flush=True)
             return
+        current = [int(x) for x in current]
         if self.hand_joint == "L20":
             return self.hand.set_current(current=current)
         else:
@@ -212,7 +225,8 @@ class LinkerHandApi:
         return self.hand.get_matrix_touch()
     
     def get_matrix_touch_v2(self):
-        return self.hand.get_matrix_touch_v2()
+        thumb_matrix , index_matrix , middle_matrix , ring_matrix , little_matrix = self.hand.get_matrix_touch_v2()
+        return thumb_matrix , index_matrix , middle_matrix , ring_matrix , little_matrix
 
     def get_torque(self):
         '''Get current maximum torque'''
