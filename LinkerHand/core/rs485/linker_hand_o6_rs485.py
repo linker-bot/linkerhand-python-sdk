@@ -231,15 +231,12 @@ class LinkerHandO6RS485:
     def set_speed(self, speed=[200] * 6):
         """设置速度 params: list len=6"""
         if self.is_valid_6xuint8(speed):
-            try:
-                self.set_thumb_speed(speed[0])
-                self.set_thumb_yaw_speed(speed[1])
-                self.set_index_speed(speed[2])
-                self.set_middle_speed(speed[3])
-                self.set_ring_speed(speed[4])
-                self.set_little_speed(speed[5])
-            except:
-                pass
+            self.set_thumb_speed(speed[0])
+            self.set_thumb_yaw_speed(speed[1])
+            self.set_index_speed(speed[2])
+            self.set_middle_speed(speed[3])
+            self.set_ring_speed(speed[4])
+            self.set_little_speed(speed[5])
     
     def set_torque(self, torque=[200] * 6):
         """设置扭矩 params: list len=6"""

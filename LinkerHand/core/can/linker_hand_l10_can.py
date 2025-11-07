@@ -367,6 +367,27 @@ class LinkerHandL10Can:
         self.send_frame(0xb5,[0xc6],sleep=0.005)
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
 
+    def get_thumb_matrix_touch(self):
+        self.send_frame(0xb1,[0xc6],sleep=0.005)
+        return self.thumb_matrix
+    
+    def get_index_matrix_touch(self):
+        self.send_frame(0xb2,[0xc6],sleep=0.005)
+        return self.index_matrix
+    
+    def get_middle_matrix_touch(self):
+        self.send_frame(0xb3,[0xc6],sleep=0.005)
+        return self.middle_matrix
+    
+    def get_ring_matrix_touch(self):
+        self.send_frame(0xb4,[0xc6],sleep=0.005)
+        return self.ring_matrix
+    
+    def get_little_matrix_touch(self):
+        self.send_frame(0xb5,[0xc6],sleep=0.005)
+        return self.little_matrix
+
+
     def get_torque(self):
         '''Get current motor torque'''
         if self.version != None and self.version[4]< 36:

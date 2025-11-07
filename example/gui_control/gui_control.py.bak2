@@ -11,8 +11,7 @@ from PyQt5.QtWidgets import (
     QSlider, QLabel, QPushButton, QGroupBox, QScrollArea, QTabWidget, 
     QFrame, QSplitter, QMessageBox, QTextEdit
 )
-from PyQt5.QtGui import QFont, QPainter, QColor, QBrush
-from PyQt5.QtCore import QRect
+from PyQt5.QtGui import QFont
 from config.constants import _HAND_CONFIGS
 current_dir = os.path.dirname(os.path.abspath(__file__))
 target_dir = os.path.abspath(os.path.join(current_dir, "../.."))
@@ -24,214 +23,9 @@ from LinkerHand.utils.color_msg import ColorMsg
 
 
 LOOP_TIME = 1000 # 循环动作间隔时间 毫秒
-
-class DotMatrixWidget(QWidget):
-    """点阵显示部件 - 白色到深红色渐变版"""
-    
-    def __init__(self, parent=None, rows=12, cols=6):
-        super().__init__(parent)
-        self.rows = rows
-        self.cols = cols
-        self.dot_size = 6
-        self.spacing = 3
-        self.data = None
-        
-        # 计算部件大小 - 增加一些额外空间确保完全显示
-        width = cols * (self.dot_size + self.spacing) + self.spacing + 2
-        height = rows * (self.dot_size + self.spacing) + self.spacing + 2
-        self.setMinimumSize(width, height)
-        self.setMaximumSize(width, height)
-        
-    def set_data(self, data):
-        """设置点阵数据"""
-        if data is not None:
-            try:
-                # 如果数据是 numpy 数组，转换为列表
-                if hasattr(data, 'tolist'):
-                    self.data = data.tolist()
-                else:
-                    self.data = data
-            except Exception as e:
-                print(f"转换数据时出错: {e}")
-                self.data = None
-        else:
-            self.data = None
-        self.update()
-        
-    def paintEvent(self, event):
-        """绘制点阵"""
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
-        
-        # 绘制背景
-        painter.fillRect(self.rect(), QColor('white'))
-        
-        for row in range(self.rows):
-            for col in range(self.cols):
-                x = self.spacing + col * (self.dot_size + self.spacing)
-                y = self.spacing + row * (self.dot_size + self.spacing)
-                
-                if self.data is not None:
-                    try:
-                        # 处理 numpy 数组或普通列表
-                        if hasattr(self.data, 'flatten'):
-                            flat_data = self.data.flatten()
-                        else:
-                            flat_data = self.data
-                        
-                        index = row * self.cols + col
-                        if index < len(flat_data):
-                            value = flat_data[index]
-                            # 确保 value 是标量数值
-                            if hasattr(value, 'item'):
-                                value = value.item()
-                                
-                            if value > 0:
-                                # 白色到深红色渐变逻辑
-                                intensity = min(255, max(0, int(value)))
-                                
-                                if intensity < 128:
-                                    # 白色到浅红色渐变
-                                    red = 255
-                                    green = 255 - (intensity * 55 // 128)
-                                    blue = 255 - (intensity * 55 // 128)
-                                    color = QColor(red, green, blue)
-                                else:
-                                    # 浅红色到深红色渐变
-                                    red = 255
-                                    green = 200 - ((intensity - 128) * 200 // 127)
-                                    blue = 200 - ((intensity - 128) * 200 // 127)
-                                    color = QColor(red, green, blue)
-                            else:
-                                color = QColor('#c8c8c8')  # 默认灰色
-                        else:
-                            color = QColor('#c8c8c8')  # 默认灰色
-                    except Exception as e:
-                        print(f"绘制点阵时出错: {e}")
-                        color = QColor('#c8c8c8')  # 默认灰色
-                else:
-                    color = QColor('#c8c8c8')  # 默认灰色
-                
-                # 绘制圆点
-                painter.setBrush(QBrush(color))
-                painter.setPen(QColor('#666666'))
-                painter.drawEllipse(x, y, self.dot_size, self.dot_size)
-
-class MatrixDisplayWidget(QWidget):
-    """矩阵显示部件，包含五个手指的点阵 - 新的排列方式"""
-    
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.finger_matrices = {}
-        self.init_ui()
-        
-    def init_ui(self):
-        """初始化UI - 新的排列方式"""
-        main_layout = QVBoxLayout(self)
-        main_layout.setSpacing(10)
-        main_layout.setContentsMargins(5, 5, 5, 5)
-        
-        # 第一行：拇指、食指、中指
-        first_row_layout = QHBoxLayout()
-        first_row_layout.setSpacing(15)
-        
-        # 拇指
-        thumb_frame = self.create_finger_frame("拇指", "thumb_matrix")
-        first_row_layout.addWidget(thumb_frame)
-        
-        # 食指
-        index_frame = self.create_finger_frame("食指", "index_matrix")
-        first_row_layout.addWidget(index_frame)
-        
-        # 中指
-        middle_frame = self.create_finger_frame("中指", "middle_matrix")
-        first_row_layout.addWidget(middle_frame)
-        
-        first_row_layout.addStretch()
-        main_layout.addLayout(first_row_layout)
-        
-        # 第二行：无名指、小指
-        second_row_layout = QHBoxLayout()
-        second_row_layout.setSpacing(15)
-        
-        # 无名指
-        ring_frame = self.create_finger_frame("无名指", "ring_matrix")
-        second_row_layout.addWidget(ring_frame)
-        
-        # 小指
-        little_frame = self.create_finger_frame("小指", "little_matrix")
-        second_row_layout.addWidget(little_frame)
-        
-        second_row_layout.addStretch()
-        main_layout.addLayout(second_row_layout)
-        
-        main_layout.addStretch()
-        
-    def create_finger_frame(self, display_name, finger_name):
-        """创建单个手指的框架"""
-        finger_frame = QWidget()
-        finger_layout = QVBoxLayout(finger_frame)
-        finger_layout.setSpacing(5)
-        finger_layout.setContentsMargins(5, 5, 5, 5)
-        
-        # 手指标签 - 居中显示
-        label = QLabel(display_name)
-        label.setAlignment(Qt.AlignCenter)
-        label.setStyleSheet("font-weight: bold;")
-        finger_layout.addWidget(label)
-        
-        # 创建点阵部件
-        matrix = DotMatrixWidget()
-        finger_layout.addWidget(matrix, 0, Qt.AlignCenter)
-        
-        self.finger_matrices[finger_name] = matrix
-        return finger_frame
-        
-    def update_matrix_data(self, finger_name, data):
-        """更新指定手指的点阵数据"""
-        if finger_name in self.finger_matrices:
-            # 处理 numpy 数组或普通列表
-            if data is not None:
-                try:
-                    # 如果数据是 numpy 数组，先转换为列表
-                    if hasattr(data, 'tolist'):
-                        data = data.tolist()
-                    
-                    # 展平数据（如果数据是二维列表或二维数组）
-                    if data and (isinstance(data[0], list) or 
-                            (hasattr(data, 'ndim') and data.ndim > 1)):
-                        # 如果是二维结构，展平为一维
-                        flattened = []
-                        for item in data:
-                            if isinstance(item, (list, tuple)) or (hasattr(item, '__iter__') and not isinstance(item, str)):
-                                flattened.extend(item)
-                            else:
-                                flattened.append(item)
-                    else:
-                        # 如果已经是一维，直接使用
-                        flattened = data
-                        
-                    self.finger_matrices[finger_name].set_data(flattened)
-                except Exception as e:
-                    print(f"处理矩阵数据时出错: {e}")
-                    # 出错时使用默认灰色点阵
-                    default_data = [0] * 72
-                    self.finger_matrices[finger_name].set_data(default_data)
-            else:
-                # 数据为空时使用默认灰色点阵
-                default_data = [0] * 72
-                self.finger_matrices[finger_name].set_data(default_data)
-            
-    def initialize_default_matrices(self):
-        """初始化显示默认点阵（所有点为灰色）"""
-        default_data = [0] * 72  # 12x6的全0矩阵
-        for finger_name in self.finger_matrices.keys():
-            self.finger_matrices[finger_name].set_data(default_data)
-
 class HandApiManager(QObject):
     """手部API管理器，处理与LinkerHandApi的通信"""
     status_updated = pyqtSignal(str, str)  # 状态类型, 消息内容
-    matrix_data_updated = pyqtSignal(dict)  # 矩阵数据更新信号
 
     def __init__(self):
         super().__init__()
@@ -241,12 +35,6 @@ class HandApiManager(QObject):
         self._init_linker_hand_type()
         # 初始化API
         self.init_api()
-        
-        # 矩阵数据更新定时器
-        self.matrix_timer = QTimer(self)
-        self.matrix_timer.timeout.connect(self.update_matrix_data)
-        self.matrix_timer.start(500)  # 每500ms更新一次矩阵数据
-        self.lock = False
 
     def _init_linker_hand_type(self):
         try:
@@ -292,46 +80,6 @@ class HandApiManager(QObject):
             self.status_updated.emit("error", f"API初始化失败: {str(e)}")
             raise
 
-    def update_matrix_data(self):
-        """更新矩阵数据"""
-        if not self.api:
-            return
-            
-        try:
-            # 获取矩阵触摸数据
-            matrix_data = {}
-
-            # 根据手部型号获取相应的矩阵数据
-            if self.is_touch == True and self.lock == False:
-                # 获取各个手指的矩阵触摸数据
-                thumb_data = self.api.get_thumb_matrix_touch()
-                index_data = self.api.get_index_matrix_touch()
-                middle_data = self.api.get_middle_matrix_touch()
-                ring_data = self.api.get_ring_matrix_touch()
-                little_data = self.api.get_little_matrix_touch()
-                matrix_data = {
-                    "thumb_matrix": thumb_data,
-                    "index_matrix": index_data,
-                    "middle_matrix": middle_data,
-                    "ring_matrix": ring_data,
-                    "little_matrix": little_data
-                }
-                
-                # 发送矩阵数据更新信号
-                self.matrix_data_updated.emit(matrix_data)
-                
-        except Exception as e:
-            # 如果获取数据失败，发送空数据
-            default_data = [0] * 72
-            matrix_data = {
-                "thumb_matrix": default_data,
-                "index_matrix": default_data,
-                "middle_matrix": default_data,
-                "ring_matrix": default_data,
-                "little_matrix": default_data
-            }
-            self.matrix_data_updated.emit(matrix_data)
-
     def publish_joint_state(self, positions: List[int]):
         """发布关节状态消息"""
         if not self.api:
@@ -339,13 +87,11 @@ class HandApiManager(QObject):
             return
             
         try:
-            self.lock = True
             # 调用API发送关节位置
             self.api.finger_move(positions)
             self.status_updated.emit("info", "关节状态已发送")
         except Exception as e:
             self.status_updated.emit("error", f"发送失败: {str(e)}")
-        self.lock = False
 
     def publish_speed(self, val: int):
         """发布速度设置"""
@@ -405,8 +151,6 @@ class HandApiManager(QObject):
                 self.status_updated.emit("info", "API连接已关闭")
             except Exception as e:
                 self.status_updated.emit("error", f"API关闭失败: {str(e)}")
-        if self.matrix_timer.isActive():
-            self.matrix_timer.stop()
 
 class HandControlGUI(QWidget):
     """灵巧手控制界面"""
@@ -423,7 +167,6 @@ class HandControlGUI(QWidget):
         # 设置API管理器
         self.api_manager = api_manager
         self.api_manager.status_updated.connect(self.update_status)
-        self.api_manager.matrix_data_updated.connect(self.update_matrix_display)
         
         # 获取手部配置
         self.hand_joint = self.api_manager.hand_joint
@@ -435,7 +178,7 @@ class HandControlGUI(QWidget):
         
         # 设置定时器发布关节状态
         self.publish_timer = QTimer(self)
-        self.publish_timer.setInterval(30)  # 10Hz发布频率
+        self.publish_timer.setInterval(100)  # 10Hz发布频率
         self.publish_timer.timeout.connect(self.publish_joint_state)
         self.publish_timer.start()
 
@@ -773,14 +516,6 @@ class HandControlGUI(QWidget):
 
         sys_info_layout.addWidget(conn_group)
         sys_info_layout.addWidget(hand_info_group)
-        
-        # 添加矩阵热力图显示
-        matrix_group = QGroupBox("手指矩阵热力图")
-        matrix_layout = QVBoxLayout(matrix_group)
-        self.matrix_display = MatrixDisplayWidget()
-        matrix_layout.addWidget(self.matrix_display)
-        sys_info_layout.addWidget(matrix_group)
-
         sys_info_layout.addStretch()
         tab_widget.addTab(sys_info_widget, "系统信息")
 
@@ -825,11 +560,6 @@ class HandControlGUI(QWidget):
         layout.addWidget(self.value_display)
         
         return panel
-
-    def update_matrix_display(self, matrix_data):
-        """更新矩阵显示"""
-        for finger_name, data in matrix_data.items():
-            self.matrix_display.update_matrix_data(finger_name, data)
 
     def on_slider_value_changed(self, index: int, value: int):
         """滑动条值改变事件处理"""

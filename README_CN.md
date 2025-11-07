@@ -14,10 +14,7 @@ LinkerHand Python SDK
 - download
 
   ```bash
-  # 开启CAN端口
-  $ sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 #USB转CAN设备蓝色灯常亮状态
-  
-  $ git clone https://github.com/linkerbotai/linker_hand_python_sdk.git
+  git clone https://github.com/linkerbotai/linker_hand_python_sdk.git
   ```
 
 - install
@@ -26,27 +23,20 @@ LinkerHand Python SDK
   pip3 install -r requirements.txt
   ```
 
-# RS485 协议切换 当前支持O6/L6，其他型号灵巧手请参考MODBUS RS485协议文档
+# CAN or RML485 协议切换
+注：由于睿尔曼当前RM65的Python的485接口BUG问题，暂不支持
+编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改。RML(睿尔曼API2) 通过睿尔曼机械臂进行485协议通讯控制LinkerHand
+MODBUS: "None" or "RML"
 
-编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改,将MODBUS:"/dev/ttyUSB0"。USB-RS485转换器在Ubuntu上一般显示为/dev/ttyUSB* or /dev/ttyACM*
-MODBUS: "None" or "/dev/ttyUSB0"
-```bash
-# 确保requirements.txt安装依赖
-# 安装系统级相关驱动
-$ pip install minimalmodbus --break-system-packages
-$ pip install pyserial --break-system-packages
-# 查看USB-RS485端口号
-$ ls /dev
-# 可以看到类似ttyUSB0端口后给端口执行权限
-$ sudo chmod 777 /dev/ttyUSB0
-```
 
 ## 相关文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
 
 ## 更新说明
-- > ### release_2.2.3
- - 1、新增支持O6/L6灵巧手 RS485通讯
+- > ### release_2.2.4
+ - 1、新增支持G20工业版灵巧手
+ - 2、重绘GUI
+
 
 - > ### release_2.1.9
  - 1、新增支持O6灵巧手
@@ -71,13 +61,19 @@ $ sudo chmod 777 /dev/ttyUSB0
   
 - position与手指关节对照表
 
+  O6:  ["大拇指弯曲", "大拇指横摆","食指弯曲", "中指弯曲", "无名指弯曲","小拇指弯曲"]
+
+  L6:  ["大拇指弯曲", "大拇指横摆","食指弯曲", "中指弯曲", "无名指弯曲","小拇指弯曲"]
+
   L7:  ["大拇指弯曲", "大拇指横摆","食指弯曲", "中指弯曲", "无名指弯曲","小拇指弯曲","拇指旋转"]
 
   L10: ["拇指根部", "拇指侧摆","食指根部", "中指根部", "无名指根部","小指根部","食指侧摆","无名指侧摆","小指侧摆","拇指旋转"]
 
   L20: ["拇指根部", "食指根部", "中指根部", "无名指根部","小指根部","拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小指侧摆","拇指横摆","预留","预留","预留","预留","拇指尖部","食指末端","中指末端","无名指末端","小指末端"]
 
-  L21: ["大拇指根部", "食指根部", "中指根部","无名指根部","小拇指根部","大拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小拇指侧摆","大拇指横滚","预留","预留","预留","预留","大拇指中部","预留","预留","预留","预留","大拇指指尖","食指指尖","中指指尖","无名指指尖","小拇指指尖"]
+  G20(工业版): ["拇指根部", "食指根部", "中指根部", "无名指根部","小指根部","拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小指侧摆","拇指横摆","预留","预留","预留","预留","拇指尖部","食指末端","中指末端","无名指末端","小指末端"]
+
+  L21: ["大拇指根部","食指根部","中指根部","无名指根部","小拇指根部","大拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小拇指侧摆","大拇指横滚","预留","预留","预留","预留","大拇指中部","预留","预留","预留","预留","大拇指指尖","食指指尖","中指指尖","无名指指尖","小拇指指尖"]
 
   L25: ["大拇指根部", "食指根部", "中指根部","无名指根部","小拇指根部","大拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小拇指侧摆","大拇指横滚","预留","预留","预留","预留","大拇指中部","食指中部","中指中部","无名指中部","小拇指中部","大拇指指尖","食指指尖","中指指尖","无名指指尖","小拇指指尖"]
 
@@ -85,7 +81,33 @@ $ sudo chmod 777 /dev/ttyUSB0
 
 &ensp;&ensp; __在运行之前, 请将 [setting.yaml](LinkerHand/config/setting.yaml) 的配置信息修改为您实际控制的灵巧手配置信息.__
 
-- #### [0000-gui_control](example/gui_control/gui_control.py) 
+- #### [0000-gui_control](example/gui_control/gui_control.py)
+开启后会弹出UI界面。通过滑动条可控制相应LinkerHand灵巧手关节运动
+
+- 增加或修改动作示例。在[constants.py](example/gui_control/config/constants.py)文件中可增加或修改动作。
+```python
+# 例如增加L6的动作序列
+"L6": HandConfig(
+        joint_names_en=["thumb_cmc_pitch", "thumb_cmc_yaw", "index_mcp_pitch", "middle_mcp_pitch", "pinky_mcp_pitch", "ring_mcp_pitch"],
+        joint_names=["大拇指弯曲", "大拇指横摆", "食指弯曲", "中指弯曲", "无名指弯曲", "小拇指弯曲"],
+        init_pos=[250] * 6,
+        preset_actions={
+            "张开": [250, 250, 250, 250, 250, 250],
+            "壹": [0, 31, 255, 0, 0, 0],
+            "贰": [0, 31, 255, 255, 0, 0],
+            "叁": [0, 30, 255, 255, 255, 0], 
+            "肆": [0, 30, 255, 255, 255, 255],
+            "伍": [250, 250, 250, 250, 250, 250],
+            "OK": [54, 41, 164, 250, 250, 250],
+            "点赞": [255, 31, 0, 0, 0, 0],
+            "握拳": [49, 61, 0, 0, 0, 0],
+            # 增加自定义动作......
+        }
+    )
+```
+
+
+
 - #### [0001-linker_hand_fast](example/L10/gesture/linker_hand_fast.py)
 - #### [0002-linker_hand_finger_bend](example/L10/gesture/linker_hand_finger_bend.py)
 - #### [0003-linker_hand_fist](example/L10/gesture/linker_hand_fist.py)
@@ -104,9 +126,6 @@ $ sudo chmod 777 /dev/ttyUSB0
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
-
-
-
 
 
 

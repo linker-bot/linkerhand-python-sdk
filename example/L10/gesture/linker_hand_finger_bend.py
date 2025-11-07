@@ -22,7 +22,7 @@ def main():
     hand_type = args.hand_type
     can = args.can
     hand = LinkerHandApi(hand_joint=hand_joint,hand_type=hand_type, can=can)
-    # 设置速度,O6、L6长度为6，L7长度为7，L10长度为10，其他长度为5
+    # 设置速度
     hand.set_speed(speed=[120,250,250,250,250])
     # 手指姿态数据
     poses = [
@@ -45,5 +45,4 @@ def main():
 
 if __name__ == "__main__":
     # python3 linker_hand_finger_bend.py --hand_type left --hand_joint L10 --can=can0
-
     main()
