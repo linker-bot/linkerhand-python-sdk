@@ -300,7 +300,6 @@ class HandApiManager(QObject):
         try:
             # 获取矩阵触摸数据
             matrix_data = {}
-
             # 根据手部型号获取相应的矩阵数据
             if self.is_touch == True and self.lock == False:
                 # 获取各个手指的矩阵触摸数据

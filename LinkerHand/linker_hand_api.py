@@ -32,8 +32,12 @@ class LinkerHandApi:
             from core.can.linker_hand_l7_can import LinkerHandL7Can
             self.hand = LinkerHandL7Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L10":
-            from core.can.linker_hand_l10_can import LinkerHandL10Can
-            self.hand = LinkerHandL10Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
+            if modbus != "None":
+                from core.rs485.linker_hand_l10_rs485 import LinkerHandL10RS485
+                self.hand = LinkerHandL10RS485(hand_id=self.hand_id,modbus_port=modbus,baudrate=115200)
+            else:
+                from core.can.linker_hand_l10_can import LinkerHandL10Can
+                self.hand = LinkerHandL10Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L20":
             from core.can.linker_hand_l20_can import LinkerHandL20Can
             self.hand = LinkerHandL20Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
