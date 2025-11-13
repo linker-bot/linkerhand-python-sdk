@@ -188,6 +188,7 @@ class LinkerHandG20Can:
         self.x90, self.x91, self.x92, self.x93 = [], [], [], []
         self.x98, self.x99, self.x9A, self.x9B, self.x9C = [], [], [], [], []
         self.xB0, self.xB1, self.xB2, self.xB3, self.xB4, self.xB5, self.xB6 = [], [], [], [], [], [], []
+        self.normal_force, self.tangential_force, self.tangential_force_dir, self.approach_inc = [[-1] * 5 for _ in range(4)]
         
         # 查询指令数据存储
         self.xC0, self.xC1, self.xC2, self.xC3, self.xC4 = [], [], [], [], []
@@ -346,7 +347,7 @@ class LinkerHandG20Can:
             
             # 触觉传感器响应
             elif frame_type == 0xB0: self.xB0 = list(response_data)
-            elif frame_type == 0xB1: 
+            elif frame_type == 0xB1:
                 d = list(response_data)
                 if len(d) == 2:
                     self.xB1 = d
@@ -354,6 +355,7 @@ class LinkerHandG20Can:
                     index = self.matrix_map.get(d[0])
                     if index is not None:
                         self.thumb_matrix[index] = d[1:]
+                        
             elif frame_type == 0xB2: 
                 d = list(response_data)
                 if len(d) == 2:
@@ -648,33 +650,33 @@ class LinkerHandG20Can:
     
     def get_thumb_touch(self):
         """获取大拇指触觉传感数据"""
-        self.send_command(FrameProperty.THUMB_TOUCH, [], sleep_time=0.007)
-        return self.xB1
+        self.send_command(FrameProperty.THUMB_TOUCH, [0xC6], sleep_time=0.007)
+        #return self.thumb_matrix
     
     def get_index_touch(self):
         """获取食指触觉传感数据"""
-        self.send_command(FrameProperty.INDEX_TOUCH, [], sleep_time=0.007)
-        return self.xB2
+        self.send_command(FrameProperty.INDEX_TOUCH, [0xC6], sleep_time=0.007)
+        #return self.xB2
     
     def get_middle_touch(self):
         """获取中指触觉传感数据"""
-        self.send_command(FrameProperty.MIDDLE_TOUCH, [], sleep_time=0.007)
-        return self.xB3
+        self.send_command(FrameProperty.MIDDLE_TOUCH, [0xC6], sleep_time=0.007)
+        #33333return self.xB3
     
     def get_ring_touch(self):
         """获取无名指触觉传感数据"""
-        self.send_command(FrameProperty.RING_TOUCH, [], sleep_time=0.007)
-        return self.xB4
+        self.send_command(FrameProperty.RING_TOUCH, [0xC6], sleep_time=0.007)
+        #return self.xB4
     
     def get_little_touch(self):
         """获取小拇指触觉传感数据"""
-        self.send_command(FrameProperty.LITTLE_TOUCH, [], sleep_time=0.007)
-        return self.xB5
+        self.send_command(FrameProperty.LITTLE_TOUCH, [0xC6], sleep_time=0.007)
+        #return self.xB5
     
     def get_palm_touch(self):
         """获取手掌触觉传感数据"""
         self.send_command(FrameProperty.PALM_TOUCH, [], sleep_time=0.015)
-        return self.xB6
+        #return self.xB6
 
     # 查询指令方法
     def get_uid(self):
@@ -783,7 +785,21 @@ class LinkerHandG20Can:
 
     def get_touch_type(self):
         """API接口:获取手指触觉传感器类型"""
-        return -1
+        self.send_command(0xb0,[],sleep_time=0.03)
+        self.send_command(0xb1,[],sleep_time=0.03)
+        t = []
+        for i in range(3):
+            t = self.xB1
+            time.sleep(0.01)
+        if len(t) == 2:
+            return 2
+        else:
+            self.send_command(0x20,[],sleep_time=0.03)
+            time.sleep(0.01)
+            if self.normal_force[0] == -1:
+                return -1
+            else:
+                return 1
     
     def get_matrix_touch(self):
         """API接口:获取手指触摸传感器数据"""
