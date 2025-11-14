@@ -188,7 +188,7 @@ class LinkerHandL10RS485:
     
     def get_touch(self) -> list:
         return [-1] * 5
-    
+        
     def get_thumb_matrix_touch(self):
         return self._pressure(finger=1)
 
@@ -203,7 +203,7 @@ class LinkerHandL10RS485:
 
     def get_little_matrix_touch(self):
         return self._pressure(finger=5)
-
+        
     def get_matrix_touch(self) -> list:
         """获取压感数据：矩阵式"""
         return [self._pressure(finger=1), self._pressure(finger=2), self._pressure(finger=3), self._pressure(finger=4), self._pressure(finger=5)]
