@@ -2,6 +2,7 @@ python-can
 dm_env
 minimalmodbus
 pymodbus
+pyserial
 pexpect
 pyquaternion
 pyagxrobots
