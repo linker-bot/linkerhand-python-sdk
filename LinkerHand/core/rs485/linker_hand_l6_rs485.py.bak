@@ -5,7 +5,7 @@ from pymodbus.client import ModbusSerialClient
 from typing import List, Dict
 import numpy as np
 
-_INTERVAL = 0.006  # 8 ms
+_INTERVAL = 0.008  # 8 ms
 
 class LinkerHandL6RS485:
     """L6机械手 Modbus-RTU 控制类"""
@@ -31,34 +31,26 @@ class LinkerHandL6RS485:
             bytesize=8, 
             parity="N", 
             stopbits=1,
-            timeout=0.05
+            timeout=1.0
         )
-        # pymodbus 3.5.1 需要显式连接
-        self.connected = self.cli.connect()
-        if not self.connected:
+        if not self.cli.connect():
             raise ConnectionError(f"RS485连接失败，端口: {modbus_port}")
 
     def _read_input_registers(self, address: int, count: int) -> List[int]:
         """读取输入寄存器"""
         time.sleep(_INTERVAL)
-        result = self.cli.read_input_registers(address=address, count=count, slave=self.slave)
-        if result.isError():
-            raise RuntimeError(f"读取输入寄存器失败: address={address}, count={count}")
-        return result.registers
+        result = self.cli.read_input_registers(address, count=count, device_id=self.slave)
+        return result.registers if not result.isError() else []
 
     def _write_register(self, address: int, value: int):
         """写入单个寄存器"""
         time.sleep(_INTERVAL)
-        result = self.cli.write_register(address=address, value=value, slave=self.slave)
-        if result.isError():
-            raise RuntimeError(f"写入寄存器失败: address={address}, value={value}")
+        self.cli.write_register(address, value, device_id=self.slave)
 
     def _write_registers(self, address: int, values: List[int]):
         """写入多个寄存器"""
         time.sleep(_INTERVAL)
-        result = self.cli.write_registers(address=address, values=values, slave=self.slave)
-        if result.isError():
-            raise RuntimeError(f"写入多个寄存器失败: address={address}, values={values}")
+        self.cli.write_registers(address, values=values, device_id=self.slave)
 
     # --------------------------------------------------
     # 基础读取接口
@@ -85,11 +77,12 @@ class LinkerHandL6RS485:
         return self._read_input_registers(24, 6)
 
     # --------------------------------------------------
-    # 压力传感器接口
+    # 压力传感器接口 (使用L10相同的方式)
     # --------------------------------------------------
     
     def _pressure(self, finger: int) -> List[int]:
         """内部：选手指 → 读压力数据"""
+        time.sleep(_INTERVAL)
         # 选择手指 (保持寄存器 36)
         self._write_register(36, finger)
         time.sleep(_INTERVAL)
@@ -123,6 +116,8 @@ class LinkerHandL6RS485:
     def read_versions(self) -> Dict[str, int]:
         """读取版本信息 (输入寄存器 148-155)"""
         result = self._read_input_registers(148, 8)
+        if not result:
+            return {}
         
         return {
             "hand_freedom": result[0],
@@ -166,9 +161,7 @@ class LinkerHandL6RS485:
     
     def close(self):
         """关闭连接"""
-        if self.connected:
-            self.cli.close()
-            self.connected = False
+        self.cli.close()
     
     def __enter__(self):
         return self
@@ -182,26 +175,31 @@ class LinkerHandL6RS485:
     
     def is_valid_6xuint8(self, lst) -> bool:
         """验证6个0-255的整数列表"""
-        if len(lst) != 6:
-            return False
-        return all(isinstance(x, int) and 0 <= x <= 255 for x in lst)
+        if len(lst) < 6:
+            lst = [lst[0]] * 6
+        lst = [int(x) for x in lst]
+        return (
+            isinstance(lst, list) and
+            len(lst) == 6 and
+            all(type(x) is int and 0 <= x <= 255 for x in lst)
+        )
     
-    def set_joint_positions(self, joint_angles=None):
+    def set_joint_positions(self, joint_angles=[0] * 6):
         """设置关节位置"""
-        joint_angles = joint_angles or [0] * 6
-        self.write_angles(joint_angles)
+        if self.is_valid_6xuint8(joint_angles):
+            self.write_angles(joint_angles)
+        else:
+            raise ValueError("无效的角度值")
 
-    def set_speed(self, speed=None):
+    def set_speed(self, speed=[200] * 6):
         """设置速度"""
-        speed = speed or [200] * 6
         self.write_speeds(speed)
     
-    def set_torque(self, torque=None):
+    def set_torque(self, torque=[200] * 6):
         """设置扭矩"""
-        torque = torque or [200] * 6
         self.write_torques(torque)
 
-    def set_current(self, current=None):
+    def set_current(self, current=[200] * 6):
         """设置电流 (L6不支持)"""
         print("当前L6不支持设置电流", flush=True)
 
@@ -259,24 +257,23 @@ class LinkerHandL6RS485:
         return [-1] * 5
 
     def get_thumb_matrix_touch(self):
-        return self._pressure(1)
+        return self._pressure(finger=1)
 
     def get_index_matrix_touch(self):
-        return self._pressure(2)
+        return self._pressure(finger=2)
 
     def get_middle_matrix_touch(self):
-        return self._pressure(3)
+        return self._pressure(finger=3)
 
     def get_ring_matrix_touch(self):
-        return self._pressure(4)
+        return self._pressure(finger=4)
 
     def get_little_matrix_touch(self):
-        return self._pressure(5)
+        return self._pressure(finger=5)
         
     def get_matrix_touch(self) -> list:
         """获取压感数据：矩阵式"""
-        return [self._pressure(1), self._pressure(2), self._pressure(3), 
-                self._pressure(4), self._pressure(5)]
+        return [self._pressure(finger=1), self._pressure(finger=2), self._pressure(finger=3), self._pressure(finger=4), self._pressure(finger=5)]
     
     def get_matrix_touch_v2(self) -> list:
         """获取压感数据：矩阵式"""
@@ -347,8 +344,6 @@ if __name__ == "__main__":
     # 使用示例
     try:
         with LinkerHandL6RS485(hand_id=0x27, modbus_port="/dev/ttyUSB0", baudrate=115200) as hand:
-            print("连接成功!")
-            
             # 打印状态信息
             hand.dump_status()
             
