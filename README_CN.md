@@ -32,7 +32,7 @@ modbus: "None" or "/dev/ttyUSB0"
 # 安装系统级相关驱动
 $ pip install minimalmodbus --break-system-packages
 $ pip install pyserial --break-system-packages
-$ pip install pymodbus --break-system-packages
+$ pip install pymodbus==3.5.1 --break-system-packages
 # 查看USB-RS485端口号
 $ ls /dev
 # 可以看到类似ttyUSB0端口后给端口执行权限

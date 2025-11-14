@@ -1,7 +1,7 @@
 python-can
 dm_env
 minimalmodbus
-pymodbus
+pymodbus==3.5.1
 pyserial
 pexpect
 pyquaternion
