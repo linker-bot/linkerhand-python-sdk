@@ -239,8 +239,9 @@ class LinkerHandO6Can:
         return self.x01
 
     def get_speed(self):
-        self.send_frame(0x05, [],sleep=0.003)
-        return self.x05
+        #self.send_frame(0x05, [],sleep=0.003)
+        #print("L6暂不支持读取实时速度")
+        return [0] * 6
 
     def get_current(self):
         '''Not supported yet.'''
@@ -298,24 +299,24 @@ class LinkerHandO6Can:
         self.send_frame(0xb5,[0xc6],sleep=0.009)
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
     
-    def get_thumb_matrix_touch(self):
-        self.send_frame(0xb1,[0xc6],sleep=0.009)
+    def get_thumb_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb1,[0xc6],sleep=sleep_time)
         return self.thumb_matrix
     
-    def get_index_matrix_touch(self):
-        self.send_frame(0xb2,[0xc6],sleep=0.009)
+    def get_index_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb2,[0xc6],sleep=sleep_time)
         return self.index_matrix
     
-    def get_middle_matrix_touch(self):
-        self.send_frame(0xb3,[0xc6],sleep=0.009)
+    def get_middle_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb3,[0xc6],sleep=sleep_time)
         return self.middle_matrix
     
-    def get_ring_matrix_touch(self):
-        self.send_frame(0xb4,[0xc6],sleep=0.009)
+    def get_ring_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb4,[0xc6],sleep=sleep_time)
         return self.ring_matrix
     
-    def get_little_matrix_touch(self):
-        self.send_frame(0xb5,[0xc6],sleep=0.009)
+    def get_little_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb5,[0xc6],sleep=sleep_time)
         return self.little_matrix
 
     def get_force(self):

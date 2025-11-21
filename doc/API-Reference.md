@@ -7,11 +7,8 @@
 
 This document provides a detailed overview of the Python API for the Linker Hand, including functions for controlling the hand's movements, retrieving sensor data, and setting operational parameters.
 
-## Public API
 
-# CAN or RML485 协议切换
-编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改。RML(睿尔曼API2) 通过睿尔曼机械臂进行485协议通讯控制LinkerHand
-MODBUS: "None" or "RML"
+## Public API
 
 ### 设置速度
 ```python

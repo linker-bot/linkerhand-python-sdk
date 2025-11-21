@@ -258,19 +258,19 @@ class LinkerHandL6RS485:
     def get_touch(self) -> list:
         return [-1] * 5
 
-    def get_thumb_matrix_touch(self):
+    def get_thumb_matrix_touch(self,sleep_time=0):
         return self._pressure(1)
 
-    def get_index_matrix_touch(self):
+    def get_index_matrix_touch(self,sleep_time=0):
         return self._pressure(2)
 
-    def get_middle_matrix_touch(self):
+    def get_middle_matrix_touch(self,sleep_time=0):
         return self._pressure(3)
 
-    def get_ring_matrix_touch(self):
+    def get_ring_matrix_touch(self,sleep_time=0):
         return self._pressure(4)
 
-    def get_little_matrix_touch(self):
+    def get_little_matrix_touch(self,sleep_time=0):
         return self._pressure(5)
         
     def get_matrix_touch(self) -> list:

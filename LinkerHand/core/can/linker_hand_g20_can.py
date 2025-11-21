@@ -814,27 +814,27 @@ class LinkerHandG20Can:
         """API接口:获取手指触摸传感器数据"""
         return self.get_matrix_touch()
 
-    def get_thumb_matrix_touch(self):
+    def get_thumb_matrix_touch(self,sleep_time=0):
         """API接口:获取[大拇指]指触摸传感器数据"""
         self.get_thumb_touch()
         return self.thumb_matrix
     
-    def get_index_matrix_touch(self):
+    def get_index_matrix_touch(self,sleep_time=0):
         """API接口:获取[食指]指触摸传感器数据"""
         self.get_index_touch()
         return self.index_matrix
     
-    def get_middle_matrix_touch(self):
+    def get_middle_matrix_touch(self,sleep_time=0):
         """API接口:获取[中指]指触摸传感器数据"""
         self.get_middle_touch()
         return self.middle_matrix
     
-    def get_ring_matrix_touch(self):
+    def get_ring_matrix_touch(self,sleep_time=0):
         """API接口:获取[无名指]指触摸传感器数据"""
         self.get_ring_touch()
         return self.ring_matrix
     
-    def get_little_matrix_touch(self):
+    def get_little_matrix_touch(self,sleep_time=0):
         """API接口:获取[小指]指触摸传感器数据"""
         self.get_little_touch()
         return self.little_matrix

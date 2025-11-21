@@ -1,11 +1,11 @@
-VERSION: 2.2.4 # 新增G20工业版
+VERSION: 3.0.1 # 新增L6、O6、L10 RS485支持
 LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
-    EXISTS: False # 是否存在左手
-    TOUCH: False # 是否有压力传感器
+    EXISTS: True # 是否存在左手
+    TOUCH: True # 是否有压力传感器
     CAN: "can0"  # 配置CAN端口 默认can0 如果MODUBS不为"None",则CAN配置失效
     MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB* CAN配置失效 当前只支持O6/L6.后续版本正在努力增加中
-    JOINT: O6 # 左手型号 O6/L6/L7/L10/L20/G20/L21/L25/
+    JOINT: L6 # 左手型号 O6/L6/L7/L10/L20/G20/L21/L25/
     NAME: # 默认值，不用修改
       - joint41
       - joint42
@@ -29,8 +29,8 @@ LINKER_HAND:  # 手部配置信息
       - joint60
     
   RIGHT_HAND:
-    EXISTS: True # 是否存在右手
-    TOUCH: True # 是否有压力传感器
+    EXISTS: False # 是否存在右手
+    TOUCH: False # 是否有压力传感器
     CAN: "can0"  # 配置CAN端口 默认can0 如果MODUBS不为"None",则CAN配置失效
     MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB* CAN配置失效 当前只支持O6/L6.后续版本正在努力增加中
     JOINT: L6 # 右手型号 O6/L6/L7/L10/L20/G20/L21/L25/

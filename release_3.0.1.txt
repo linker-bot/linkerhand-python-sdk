@@ -1,3 +1,7 @@
+release_3.0.1
+1、支持O6/L6/L10 RS485通讯 pymodbus模式
+
+
 release_2.2.4
 1、新增支持G20工业版
 2、重绘GUI

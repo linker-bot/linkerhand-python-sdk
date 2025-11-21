@@ -32,7 +32,7 @@ modbus: "None" or "/dev/ttyUSB0"
 # 安装系统级相关驱动
 $ pip install minimalmodbus --break-system-packages
 $ pip install pyserial --break-system-packages
-$ pip install pymodbus==3.5.1 --break-system-packages
+$ pip install pymodbus --break-system-packages
 # 查看USB-RS485端口号
 $ ls /dev
 # 可以看到类似ttyUSB0端口后给端口执行权限
@@ -47,6 +47,10 @@ $ python3 example/gui_control/gui_control.py
 [Linker Hand API for Python Document](doc/API-Reference.md)
 
 ## 更新说明
+
+- > ### release_3.0.1
+ - 1、支持O6/L6/L10 RS485通讯 pymodbus模式
+
 - > ### release_2.2.4
  - 1、新增支持G20工业版灵巧手
  - 2、重绘GUI
