@@ -14,7 +14,7 @@ LinkerHand Python SDK
 - download
 
 ```bash
-$ git clone https://github.com/linkerbotai/linker_hand_python_sdk.git
+$ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 ```
 
 - install
