@@ -13,15 +13,15 @@ LinkerHand Python SDK
 &ensp;&ensp;您可以在安装requirements.txt后的情况下运行示例。仅支持 Python3。
 - download
 
-  ```bash
- $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
-  ```
+```bash
+$ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
+```
 
 - install
 
-  ```bash
-  pip3 install -r requirements.txt
-  ```
+```bash
+$ pip3 install -r requirements.txt
+```
 
 ## RS485 协议切换 当前支持O6/L6/L10，其他型号灵巧手请参考MODBUS RS485协议文档
 
@@ -144,6 +144,7 @@ $ python3 example/gui_control/gui_control.py
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
