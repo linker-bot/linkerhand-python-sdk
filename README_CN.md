@@ -14,7 +14,7 @@ LinkerHand Python SDK
 - download
 
   ```bash
-  git clone https://github.com/linkerbotai/linker_hand_python_sdk.git
+ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
   ```
 
 - install
@@ -144,6 +144,7 @@ $ python3 example/gui_control/gui_control.py
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
