@@ -2,10 +2,10 @@
 
 # LinkerHand-Python-SDK
 
-## Overview
-LinkerHand Python SDK
+## 概述 Linker Hand [灵心巧手(北京)科技有限公司](https://linkerbot.cn/index)
+专注于人工智能和机器人解决方案，帮助开发者、企业、科研机构快速实现真实场景落地
 
-## Caution
+## 注意
 - 请确保灵巧手未开启其他控制，如linker_hand_sdk_ros、动捕手套控制和其他控制灵巧手的topic。以免冲突。
 - 请将固定灵巧手，以免灵巧手在运动时跌落。
 - 请确保灵巧手电源与USB转CAN连接正确。
@@ -151,6 +151,7 @@ $ python3 example/gui_control/gui_control.py
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
