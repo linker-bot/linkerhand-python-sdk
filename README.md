@@ -3,13 +3,13 @@
 
 ## Overview
 LinkerHand Python SDK
+
+[中文](README_CN.md)  |  [English](README.md)
+
 ## Caution
 - Please ensure that the dexterous hand is not running any other control methods, such as linker_hand_sdk_ros, motion capture glove control, or other topics    controlling the hand, to avoid conflicts.
 - Please secure the dexterous hand to prevent it from falling during movement.
 - Please ensure the dexterous hand's power and USB-to-CAN connection are correct.
-
-[中文](README_CN.md)  |  [English](README.md)
-
 
 | Name | Version | Link |
 | --- | --- | --- |
