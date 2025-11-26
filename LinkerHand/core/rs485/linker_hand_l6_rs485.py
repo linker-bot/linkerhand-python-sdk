@@ -88,13 +88,75 @@ class LinkerHandL6RS485:
     # 压力传感器接口
     # --------------------------------------------------
     
-    def _pressure(self, finger: int) -> List[int]:
-        """内部：选手指 → 读压力数据"""
-        # 选择手指 (保持寄存器 36)
-        self._write_register(36, finger)
-        time.sleep(_INTERVAL)
-        # 读取压力数据 (输入寄存器 52-122)
-        return np.array(self._read_input_registers(52, 71))
+    # def _pressure(self, finger: int) -> List[int]:
+    #     """内部：选手指 → 读压力数据"""
+    #     # 选择手指 (保持寄存器 36)
+    #     self._write_register(36, finger)
+    #     time.sleep(_INTERVAL)
+    #     # 读取压力数据 (输入寄存器 52-122)
+    #     return np.array(self._read_input_registers(52, 71))
+
+    def _pressure(self, finger: int) -> np.ndarray:
+        """
+        6x12 (72点) 矩阵尺寸。
+        Modbus 地址 60/62。
+        """
+        rows = 12  # 12 行
+        cols = 6   # 6 列
+        finger_size = rows * cols  # 72 个数据点
+        
+        # modbus 地址和计数
+        write_address = 60  # 写入手指选择
+        read_address = 62   # 读取压力数据
+        read_count = 96     # 读取 96 个寄存器
+        skip_count = 10     # 跳过前 10 个校验点
+        
+        # 0. 参数校验和手指写入值确定
+        if finger < 1 or finger > 5:
+            raise ValueError(f"无效的手指编号: {finger}。手指编号应在 1 到 5 之间。")
+            
+        finger_write_value = finger 
+        
+        # 1. 写入手指选择寄存器 (地址 60)
+        time.sleep(0.008)
+        wrsp = self.cli.write_register(address=write_address, value=finger_write_value, slave=self.slave)
+        if wrsp.isError():
+            raise RuntimeError(f"写入手指选择 {finger} 到地址 {write_address} 失败: {wrsp}")
+
+        # 写入后等待片刻
+        time.sleep(0.008) 
+        
+        # 2. 读取地址 62 的数据
+        rrsp = self.cli.read_input_registers(address=read_address, count=read_count, slave=self.slave)
+        
+        if rrsp.isError():
+            raise RuntimeError(f"读取地址 {read_address} 压力数据失败: {rrsp}")
+            
+        registers_16bit: List[int] = rrsp.registers 
+        
+        # 3. 核心数据处理
+        # a. 提取低 8 位数据 (得到 96 个 8 位数据点)
+        final_data_96 = [reg_value & 255 for reg_value in registers_16bit]
+        
+        # b. 跳过前 10 个校验/头部数据点 (得到 86 个有效数据点)
+        effective_data = np.array(final_data_96[skip_count:], dtype=np.uint8)
+        # c. 截取当前手指的矩阵数据 (从 86 个有效点中截取 72 个点)
+        start_idx = 0 
+        end_idx = finger_size  # 72
+        
+        finger_data_flat = effective_data[start_idx:end_idx]
+        
+        # d. 验证数据长度
+        if finger_data_flat.size != finger_size:
+            raise ValueError(
+                f"数据提取失败。期望 {finger_size} 点 ({rows}x{cols})，"
+                f"但仅截取到 {finger_data_flat.size} 点。请检查协议，确认地址 62 是否一次性返回了所有手指数据。"
+            )
+            
+        # e. 重塑为二维矩阵 (12 行 6 列)
+        finger_matrix = finger_data_flat.reshape((rows, cols))
+                
+        return finger_matrix
 
     def read_pressure_thumb(self) -> np.ndarray:
         """读取大拇指压力数据"""
