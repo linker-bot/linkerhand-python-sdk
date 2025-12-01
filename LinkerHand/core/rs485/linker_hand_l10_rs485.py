@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 import os
 import time
-from typing import List
+import struct
+from typing import Dict, List
 import numpy as np
 from pymodbus.client import ModbusSerialClient
-_INTERVAL = 0.008  # 8 ms
-
-
+_INTERVAL = 0.005  # 8 ms
 class LinkerHandL10RS485:
     KEYS = ["thumb_cmc_pitch", "thumb_cmc_roll", "index_mcp_pitch", "middle_mcp_pitch",
             "ring_mcp_pitch", "pinky_mcp_pitch", "index_mcp_roll", "ring_mcp_roll",
@@ -109,7 +108,6 @@ class LinkerHandL10RS485:
     #     if rrsp.isError():
     #         raise RuntimeError(f"read pressure finger={finger} failed: {rrsp}")
     #     return np.array(rrsp.registers, dtype=np.uint8)
-
     def _pressure(self, finger: int) -> np.ndarray:
         """
         6x12 (72点) 矩阵尺寸。
@@ -171,6 +169,9 @@ class LinkerHandL10RS485:
         finger_matrix = finger_data_flat.reshape((rows, cols))
                 
         return finger_matrix
+
+    
+    
 
     # --------------------------------------------------
     # 批量写入接口

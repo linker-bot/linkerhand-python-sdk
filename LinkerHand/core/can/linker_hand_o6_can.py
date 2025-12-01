@@ -336,6 +336,9 @@ class LinkerHandO6Can:
         self.get_motor_fault_code()
         return self.x35
     
+    def get_finger_order(self):
+        return ["thumb_cmc_pitch", "thumb_cmc_yaw", "index_mcp_pitch", "middle_mcp_pitch", "ring_mcp_pitch", "pinky_mcp_pitch"]
+
     def show_fun_table(self):
         pass
 

@@ -4,7 +4,7 @@ import can
 import time,sys
 import threading
 import numpy as np
-from tabulate import tabulate
+#from tabulate import tabulate
 from enum import Enum
 from utils.open_can import OpenCan
 from utils.color_msg import ColorMsg
@@ -411,6 +411,10 @@ class LinkerHandL10Can:
         time.sleep(0.002)
         self.send_frame(0x03,[])
         return self.x02+self.x03
+    
+    def get_finger_order(self):
+        return ["thumb_cmc_pitch", "thumb_cmc_yaw", "index_mcp_pitch", "middle_mcp_pitch", "ring_mcp_pitch", "pinky_mcp_pitch",
+                        "index_mcp_roll", "ring_mcp_roll", "pinky_mcp_roll", "thumb_cmc_roll"]
 
     def show_fun_table(self):
         # if len(data) != 8 or data[0] != 0x64:
@@ -439,7 +443,7 @@ class LinkerHandL10Can:
         
         #return [data[0],data[1],data[2],chr(data[3]),f"V{data[4] >> 4}.{data[4] & 0x0F}",f"V{data[5] >> 4}.{data[5] & 0x0F}",data[6]]
         table = [[k, v] for k, v in result.items()]
-        print(tabulate(table, tablefmt="grid"), flush=True)
+        #print(tabulate(table, tablefmt="grid"), flush=True)
 
 
     # # 示例数据

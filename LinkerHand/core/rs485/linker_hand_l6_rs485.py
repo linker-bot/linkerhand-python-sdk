@@ -95,7 +95,6 @@ class LinkerHandL6RS485:
     #     time.sleep(_INTERVAL)
     #     # 读取压力数据 (输入寄存器 52-122)
     #     return np.array(self._read_input_registers(52, 71))
-
     def _pressure(self, finger: int) -> np.ndarray:
         """
         6x12 (72点) 矩阵尺寸。

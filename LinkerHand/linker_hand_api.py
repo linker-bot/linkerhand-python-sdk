@@ -36,8 +36,12 @@ class LinkerHandApi:
                 from core.can.linker_hand_o6_can import LinkerHandO6Can
                 self.hand = LinkerHandO6Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L7":
-            from core.can.linker_hand_l7_can import LinkerHandL7Can
-            self.hand = LinkerHandL7Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
+            if modbus != "None":
+                from core.rs485.linker_hand_l7_rs485 import LinkerHandL7RS485
+                self.hand = LinkerHandL7RS485(hand_id=self.hand_id,modbus_port=modbus,baudrate=115200)
+            else:
+                from core.can.linker_hand_l7_can import LinkerHandL7Can
+                self.hand = LinkerHandL7Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L10":
             if modbus != "None":
                 from core.rs485.linker_hand_l10_rs485 import LinkerHandL10RS485
@@ -299,10 +303,11 @@ class LinkerHandApi:
 
     def get_finger_order(self):
         '''Get finger motor order'''
-        if self.hand_joint == "L21" or self.hand_joint == "L25" or self.hand_joint == "G20":
-            return self.hand.get_finger_order()
-        else:
-            return []
+        # if self.hand_joint == "L21" or self.hand_joint == "L25" or self.hand_joint == "G20":
+        #     return self.hand.get_finger_order()
+        # else:
+        #     return []
+        return self.hand.get_finger_order()
         
     def range_to_arc_left(self, state, hand_joint):
         return range_to_arc_left(left_range=state, hand_joint=hand_joint)

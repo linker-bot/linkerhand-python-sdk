@@ -417,7 +417,10 @@ class LinkerHandL20Can:
     
     def show_fun_table(self):
         pass
-
+    
+    def get_finger_order(self):
+        return []
+    
     def close_can_interface(self):
         if self.bus:
             self.bus.shutdown()  # Close CAN bus
