@@ -437,6 +437,7 @@ class LinkerHandL24Can:
     
     def get_finger_order(self):
         return []
-    
+    def get_serial_number(self):
+        return [0] * 6
     def show_fun_table(self):
         pass

@@ -730,6 +730,9 @@ class LinkerHandL21Can:
         self.get_little_threshold()
         return self.x61+self.x62+self.x63+self.x64+self.x65
     
+    def get_serial_number(self):
+        return [0] * 6
+
     def get_finger_order(self):
         return [
             "thumb_root",

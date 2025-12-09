@@ -67,6 +67,13 @@ class LinkerHandL10Can:
             160: 10,
             176: 11,
         }
+        self.serial_number = []
+        self.serial_number_map = {
+            0: 0,
+            1: 1,
+            2: 2,
+            3: 3,
+        }
         self.can_id = can_id
         self.joint_angles = [0] * 10
         self.pressures = [200] * 5  # Default torque 200
@@ -273,6 +280,13 @@ class LinkerHandL10Can:
                 self.version =  list(response_data)
             elif frame_type == 0xC2: # version number
                 self.version = list(response_data)
+            elif frame_type == 0xC0:
+                d = list(response_data)
+                index = self.serial_number_map.get(d[0])
+                if index is not None:
+                    self.serial_number=self.serial_number + d[1:]
+                else:
+                    self.serial_number=self.serial_number + [-1] * 6
 
     def get_version(self):
         self.send_frame(0x64, [], sleep=0.1)
@@ -412,6 +426,23 @@ class LinkerHandL10Can:
         self.send_frame(0x03,[])
         return self.x02+self.x03
     
+    def get_serial_number(self):
+        try:
+            self.send_frame(0xC0,[],sleep=0.005)
+            # 1. 使用 bytes() 函数将整数列表转换为字节对象
+            #    bytes() 接收一个由 0-255 之间的整数组成的列表。
+            byte_data = bytes(self.serial_number)
+            # 2. 使用 .decode() 方法将字节对象解码为 ASCII 字符串
+            result_string = byte_data.decode('ascii')
+            if result_string == "":
+                return "-1"
+            else:
+                # print(f"原始 ASCII 码列表: {self.serial_number}")
+                # print(f"解码后的字符串: {result_string}")
+                return result_string
+        except:
+            return "-1"
+
     def get_finger_order(self):
         return ["thumb_cmc_pitch", "thumb_cmc_yaw", "index_mcp_pitch", "middle_mcp_pitch", "ring_mcp_pitch", "pinky_mcp_pitch",
                         "index_mcp_roll", "ring_mcp_roll", "pinky_mcp_roll", "thumb_cmc_roll"]

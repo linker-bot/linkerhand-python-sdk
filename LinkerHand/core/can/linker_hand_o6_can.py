@@ -21,6 +21,7 @@ class LinkerHandO6Can:
         self.x35 = [0] * 6 # 关节错误码
         self.x36 = [-1] * 6 # 电流
         self.xb0,self.xb1,self.xb2,self.xb3,self.xb4,self.xb5 = [-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5
+
         self.thumb_matrix = np.full((12, 6), -1)
         self.index_matrix = np.full((12, 6), -1)
         self.middle_matrix = np.full((12, 6), -1)
@@ -39,6 +40,13 @@ class LinkerHandO6Can:
             144: 9,
             160: 10,
             176: 11,
+        }
+        self.serial_number = []
+        self.serial_number_map = {
+            0: 0,
+            1: 1,
+            2: 2,
+            3: 3,
         }
         # Fault codes
         
@@ -224,6 +232,14 @@ class LinkerHandO6Can:
                 self.version = list(response_data)
             elif frame_type == 0xC2: # O6 version number
                 self.version = list(response_data)
+            elif frame_type == 0xC0:
+                d = list(response_data)
+                index = self.serial_number_map.get(d[0])
+                if index is not None:
+                    self.serial_number=self.serial_number + d[1:]
+                else:
+                    self.serial_number=self.serial_number + [-1] * 6
+                
 
 
     def get_version(self):
@@ -341,6 +357,23 @@ class LinkerHandO6Can:
 
     def show_fun_table(self):
         pass
+
+    def get_serial_number(self):
+        try:
+            self.send_frame(0xC0,[],sleep=0.005)
+            # 1. 使用 bytes() 函数将整数列表转换为字节对象
+            #    bytes() 接收一个由 0-255 之间的整数组成的列表。
+            byte_data = bytes(self.serial_number)
+            # 2. 使用 .decode() 方法将字节对象解码为 ASCII 字符串
+            result_string = byte_data.decode('ascii')
+            if result_string == "":
+                return "-1"
+            else:
+                # print(f"原始 ASCII 码列表: {self.serial_number}")
+                # print(f"解码后的字符串: {result_string}")
+                return result_string
+        except:
+            return "-1"
 
     def close_can_interface(self):
         """Stop the CAN communication."""

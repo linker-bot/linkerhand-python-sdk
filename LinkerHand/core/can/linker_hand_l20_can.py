@@ -415,6 +415,9 @@ class LinkerHandL20Can:
         '''Get pressure sensor data'''
         return [self.normal_force,self.tangential_force,self.tangential_force_dir,self.approach_inc]
     
+    def get_serial_number(self):
+        return [0] * 6
+
     def show_fun_table(self):
         pass
     

@@ -311,6 +311,9 @@ class LinkerHandL10RS485:
 
     def get_fault(self) -> List[int]:
         return self.read_error_codes()
+    
+    def get_serial_number(self):
+        return [0] * 6
 
 
 # ------------------- demo -------------------

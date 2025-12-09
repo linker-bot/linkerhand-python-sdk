@@ -935,6 +935,8 @@ class LinkerHandG20Can:
         if self.bus:
             self.bus.shutdown()
             self.running = False
-
+    
+    def get_serial_number(self):
+        return [0] * 6
     def get_finger_order(self):
         return ["Thumb Base", "Index Finger Base", "Middle Finger Base", "Ring Finger Base", "Pinky Finger Base", "Thumb Abduction", "Index Finger Abduction", "Middle Finger Abduction", "Ring Finger Abduction", "Pinky Finger Abduction", "Thumb Horizontal Abduction", "Reserved", "Reserved", "Reserved", "Reserved", "Thumb Tip", "Index Finger Tip", "Middle Finger Tip", "Ring Finger Tip", "Pinky Finger Tip"]

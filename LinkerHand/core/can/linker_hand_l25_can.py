@@ -791,6 +791,7 @@ class LinkerHandL25Can:
         l25_pose[29] = pose[24]
         return l25_pose
     
-
+    def get_serial_number(self):
+        return [0] * 6
     def show_fun_table(self):
         pass

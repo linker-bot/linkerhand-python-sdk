@@ -409,6 +409,9 @@ class LinkerHandO6RS485:
         little_matrix = np.full((12, 6), -1)
         return thumb_matrix , index_matrix , middle_matrix , ring_matrix , little_matrix
     
+    def get_serial_number(self):
+        return [0] * 6
+    
     def get_matrix_touch_v2(self) -> list:
         return self.get_matrix_touch()
     

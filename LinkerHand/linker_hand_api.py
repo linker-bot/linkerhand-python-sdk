@@ -70,10 +70,12 @@ class LinkerHandApi:
                 ColorMsg(msg=f"{self.can} interface is not open", color="red")
                 sys.exit(1)
         version = self.get_embedded_version()
+        self.serial_number = self.get_serial_number()
         if version == None or len(version) == 0:
             ColorMsg(msg="Warning: Hardware version number not recognized, it is recommended to terminate the program and re insert USB to CAN conversion", color="yellow")
         else:
             ColorMsg(msg=f"Embedded:{version}", color="green")
+        ColorMsg(msg=f"Linker Hand Serial Number: {self.serial_number}", color="green")
     
     # Five-finger movement
     def finger_move(self, pose=[]):
@@ -179,6 +181,10 @@ class LinkerHandApi:
         '''Get embedded version'''
         return self.hand.get_version()
     
+    def get_serial_number(self):
+        '''Get serial number'''
+        return self.hand.get_serial_number()
+
     def get_current(self):
         '''Get current'''
         return self.hand.get_current()

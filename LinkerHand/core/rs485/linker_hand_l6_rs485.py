@@ -354,6 +354,9 @@ class LinkerHandL6RS485:
     def get_fault(self) -> list:
         """获取当前电机故障码"""
         return self.read_error_codes()
+    
+    def get_serial_number(self):
+        return [0] * 6
 
     # --------------------------------------------------
     # 便捷方法

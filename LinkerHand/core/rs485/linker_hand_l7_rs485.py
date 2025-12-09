@@ -336,7 +336,9 @@ class LinkerHandL7RS485:
     def get_fault(self) -> List[int]:
         return self.get_error_codes()
 
-
+    def get_serial_number(self):
+        return [0] * 6
+    
     def get_finger_order(self):
         return ["thumb_cmc_pitch", "thumb_cmc_yaw", "index_mcp_pitch", "middle_mcp_pitch", "ring_mcp_pitch", "pinky_mcp_pitch", "thumb_cmc_roll"]
     
