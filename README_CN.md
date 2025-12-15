@@ -29,10 +29,24 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 - install
 
 ```bash
+$ cd linkerhand-python-sdk/
 $ pip3 install -r requirements.txt
 ```
 
-## RS485 协议切换 当前支持O6/L6/L10，其他型号灵巧手请参考MODBUS RS485协议文档
+- 快速使用示例 by CAN
+编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改,配置CAN: "can0"(根据实际硬件情况来确定，一般第一个为can0)，配置MODBUS:"None"
+```bash
+# Open the CAN port
+$ sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 # USB-to-CAN device blue light stays solid. This step can be skipped on Ubuntu systems after modifying setting.ymal as required.
+$ cd examples/gui_control
+$ sudo chmod a+x gui_control.py
+$ python3 gui_control.py
+```
+<img  src="resource/gui_control.png" width="400">
+
+
+
+## RS485 协议使用 当前支持O6/L6/L10，其他型号灵巧手请参考官网MODBUS RS485协议文档 注：如不确定协议类型，请咨询技术支持。
 
 编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改,将MODBUS:"/dev/ttyUSB0"，配置文件中"modbus"参数为"/dev/ttyUSB0"。USB-RS485转换器在Ubuntu上一般显示为/dev/ttyUSB* or /dev/ttyACM*
 modbus: "None" or "/dev/ttyUSB0"

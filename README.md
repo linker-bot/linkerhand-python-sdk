@@ -30,8 +30,20 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 - install
 
 ```bash
+$ cd linkerhand-python-sdk/
 $ pip3 install -r requirements.txt
 ```
+
+- 快速使用示例 by CAN
+Edit the config/setting.yaml configuration file and modify the parameters according to the comments inside. Set CAN:"can0" and Set MODBUS: "None"
+```bash
+# Open the CAN port
+$ sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 # USB-to-CAN device blue light stays solid. This step can be skipped on Ubuntu systems after modifying setting.ymal as required.
+$ cd examples/gui_control
+$ sudo chmod a+x gui_control.py
+$ python3 gui_control.py
+```
+<img  src="resource/gui_control.png" width="400">
 
 ## RS485 Protocol Switching (Currently supports O6/L6/L10. For other models, please refer to the MODBUS RS485 protocol document)
 
