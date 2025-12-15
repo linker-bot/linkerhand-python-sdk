@@ -42,7 +42,7 @@ $ cd examples/gui_control
 $ sudo chmod a+x gui_control.py
 $ python3 gui_control.py
 ```
-<img  src="resource/gui_control.png" width="400">
+<img  src="doc/gui_control.png" width="400">
 
 
 

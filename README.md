@@ -43,7 +43,7 @@ $ cd examples/gui_control
 $ sudo chmod a+x gui_control.py
 $ python3 gui_control.py
 ```
-<img  src="resource/gui_control.png" width="400">
+<img  src="doc/gui_control.png" width="400">
 
 ## RS485 Protocol Switching (Currently supports O6/L6/L10. For other models, please refer to the MODBUS RS485 protocol document)
 
