@@ -6,7 +6,7 @@ from utils.open_can import OpenCan
 from utils.color_msg import ColorMsg
 
 
-class LinkerHandO6Can:
+class LinkerHandL6Can:
     def __init__(self, can_id, can_channel='can0', baudrate=1000000,yaml=""):
         self.can_id = can_id
         self.can_channel = can_channel
@@ -22,11 +22,11 @@ class LinkerHandO6Can:
         self.x36 = [-1] * 6 # 电流
         self.xb0,self.xb1,self.xb2,self.xb3,self.xb4,self.xb5 = [-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5,[-1] * 5
 
-        self.thumb_matrix = np.full((10, 4), -1)
-        self.index_matrix = np.full((10, 4), -1)
-        self.middle_matrix = np.full((10, 4), -1)
-        self.ring_matrix = np.full((10, 4), -1)
-        self.little_matrix = np.full((10, 4), -1)
+        self.thumb_matrix = np.full((12, 6), -1)
+        self.index_matrix = np.full((12, 6), -1)
+        self.middle_matrix = np.full((12, 6), -1)
+        self.ring_matrix = np.full((12, 6), -1)
+        self.little_matrix = np.full((12, 6), -1)
         self.matrix_map = {
             0: 0,
             16: 1,
@@ -180,11 +180,11 @@ class LinkerHandO6Can:
             elif frame_type == 0x23:
                 d = list(response_data)
                 self.approach_inc = [float(i) for i in d]
-            elif frame_type == 0x33: # O6 temperature
+            elif frame_type == 0x33: # L6 temperature
                 self.x33 = list(response_data)
-            elif frame_type == 0x35: # O6 fault codes
+            elif frame_type == 0x35: # L6 fault codes
                 self.x35 = list(response_data)
-            elif frame_type == 0x36: # O6 电流
+            elif frame_type == 0x36: # L6 电流
                 self.x36 = list(response_data)
             elif frame_type == 0xb0:
                 self.xb0 = list(response_data)
@@ -192,7 +192,7 @@ class LinkerHandO6Can:
                 d = list(response_data)
                 if len(d) == 2:
                     self.xb1 = d
-                elif len(d) == 5:
+                elif len(d) == 7:
                     index = self.matrix_map.get(d[0])
                     if index is not None:
                         self.thumb_matrix[index] = d[1:]  # Remove the first flag bit
@@ -200,7 +200,7 @@ class LinkerHandO6Can:
                 d = list(response_data)
                 if len(d) == 2:
                     self.xb2 = d
-                elif len(d) == 5:
+                elif len(d) == 7:
                     index = self.matrix_map.get(d[0])
                     if index is not None:
                         self.index_matrix[index] = d[1:]  # Remove the first flag bit
@@ -208,7 +208,7 @@ class LinkerHandO6Can:
                 d = list(response_data)
                 if len(d) == 2:
                     self.xb3 = d
-                elif len(d) == 5:
+                elif len(d) == 7:
                     index = self.matrix_map.get(d[0])
                     if index is not None:
                         self.middle_matrix[index] = d[1:]  # Remove the first flag bit
@@ -216,7 +216,7 @@ class LinkerHandO6Can:
                 d = list(response_data)
                 if len(d) == 2:
                     self.xb4 = d
-                elif len(d) == 5:
+                elif len(d) == 7:
                     index = self.matrix_map.get(d[0])
                     if index is not None:
                         self.ring_matrix[index] = d[1:]  # Remove the first flag bit
@@ -224,13 +224,13 @@ class LinkerHandO6Can:
                 d = list(response_data)
                 if len(d) == 2:
                     self.xb5 = d
-                elif len(d) == 5:
+                elif len(d) == 7:
                     index = self.matrix_map.get(d[0])
                     if index is not None:
                         self.little_matrix[index] = d[1:]  # Remove the first flag bit
-            elif frame_type == 0x64: # O6 version number
+            elif frame_type == 0x64: # L6 version number
                 self.version = list(response_data)
-            elif frame_type == 0xC2: # O6 version number
+            elif frame_type == 0xC2: # L6 version number
                 self.version = list(response_data)
             elif frame_type == 0xC0:
                 d = list(response_data)
@@ -302,40 +302,40 @@ class LinkerHandO6Can:
         return [self.xb1[1],self.xb2[1],self.xb3[1],self.xb4[1],self.xb5[1],0] # The last digit is palm, currently not available
     
     def get_matrix_touch(self):
-        self.send_frame(0xb1,[0xa4],sleep=0.01)
-        self.send_frame(0xb2,[0xa4],sleep=0.01)
-        self.send_frame(0xb3,[0xa4],sleep=0.01)
-        self.send_frame(0xb4,[0xa4],sleep=0.01)
-        self.send_frame(0xb5,[0xa4],sleep=0.01)
+        self.send_frame(0xb1,[0xc6],sleep=0.01)
+        self.send_frame(0xb2,[0xc6],sleep=0.01)
+        self.send_frame(0xb3,[0xc6],sleep=0.01)
+        self.send_frame(0xb4,[0xc6],sleep=0.01)
+        self.send_frame(0xb5,[0xc6],sleep=0.01)
 
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
     
     def get_matrix_touch_v2(self):
-        self.send_frame(0xb1,[0xa4],sleep=0.009)
-        self.send_frame(0xb2,[0xa4],sleep=0.009)
-        self.send_frame(0xb3,[0xa4],sleep=0.009)
-        self.send_frame(0xb4,[0xa4],sleep=0.009)
-        self.send_frame(0xb5,[0xa4],sleep=0.009)
+        self.send_frame(0xb1,[0xc6],sleep=0.009)
+        self.send_frame(0xb2,[0xc6],sleep=0.009)
+        self.send_frame(0xb3,[0xc6],sleep=0.009)
+        self.send_frame(0xb4,[0xc6],sleep=0.009)
+        self.send_frame(0xb5,[0xc6],sleep=0.009)
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
     
-    def get_thumb_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb1,[0xa4],sleep=sleep_time)
+    def get_thumb_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb1,[0xc6],sleep=sleep_time)
         return self.thumb_matrix
     
-    def get_index_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb2,[0xa4],sleep=sleep_time)
+    def get_index_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb2,[0xc6],sleep=sleep_time)
         return self.index_matrix
     
-    def get_middle_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb3,[0xa4],sleep=sleep_time)
+    def get_middle_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb3,[0xc6],sleep=sleep_time)
         return self.middle_matrix
     
-    def get_ring_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb4,[0xa4],sleep=sleep_time)
+    def get_ring_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb4,[0xc6],sleep=sleep_time)
         return self.ring_matrix
     
-    def get_little_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb5,[0xa4],sleep=sleep_time)
+    def get_little_matrix_touch(self,sleep_time=0.005):
+        self.send_frame(0xb5,[0xc6],sleep=sleep_time)
         return self.little_matrix
 
     def get_force(self):

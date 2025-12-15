@@ -33,8 +33,8 @@ class LinkerHandApi:
                 from core.rs485.linker_hand_l6_rs485 import LinkerHandL6RS485
                 self.hand = LinkerHandL6RS485(hand_id=self.hand_id,modbus_port=modbus,baudrate=115200)
             else:
-                from core.can.linker_hand_o6_can import LinkerHandO6Can
-                self.hand = LinkerHandO6Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
+                from core.can.linker_hand_l6_can import LinkerHandL6Can
+                self.hand = LinkerHandL6Can(can_id=self.hand_id,can_channel=self.can, yaml=self.yaml)
         if self.hand_joint == "L7":
             if modbus != "None":
                 from core.rs485.linker_hand_l7_rs485 import LinkerHandL7RS485
