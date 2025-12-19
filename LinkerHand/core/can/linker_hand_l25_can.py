@@ -155,6 +155,8 @@ class LinkerHandL25Can:
         # 根据操作系统初始化 CAN 总线
         try:
             if sys.platform == "linux":
+                self.open_can.open_can(self.can_channel)
+                time.sleep(0.1)
                 self.bus = can.interface.Bus(
                     channel=can_channel, interface="socketcan", bitrate=baudrate, 
                     can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]

@@ -65,7 +65,6 @@ class OpenCan:
                 text=True,
                 capture_output=True
             )
-            
         except subprocess.CalledProcessError as e:
             pass
         except Exception as e:

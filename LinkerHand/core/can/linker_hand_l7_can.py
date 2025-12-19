@@ -61,6 +61,8 @@ class LinkerHandL7Can:
     def init_can_bus(self, channel, baudrate):
         try:
             if sys.platform == "linux":
+                self.open_can.open_can(self.can_channel)
+                time.sleep(0.1)
                 return can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
             elif sys.platform == "win32":
                 return can.interface.Bus(channel=channel, interface='pcan', bitrate=baudrate)
