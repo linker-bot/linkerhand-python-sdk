@@ -183,7 +183,10 @@ class LinkerHandApi:
     
     def get_serial_number(self):
         '''Get serial number'''
-        return self.hand.get_serial_number()
+        try:
+            return self.hand.sn
+        except:
+            return self.hand.get_serial_number()
 
     def get_current(self):
         '''Get current'''
@@ -223,7 +226,10 @@ class LinkerHandApi:
 
     def get_touch_type(self):
         '''Get touch type'''
-        return self.hand.get_touch_type()
+        try:
+            return self.hand.touch_type
+        except:
+            return self.hand.get_touch_type()
     
     def get_force(self):
         '''Get normal force, tangential force, tangential force direction, approach sensing data'''

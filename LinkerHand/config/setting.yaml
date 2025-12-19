@@ -1,4 +1,4 @@
-VERSION: 3.0.1 # 新增L6、O6、L10 RS485支持
+VERSION: 3.0.2 # 新增4*10矩阵压感
 LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
     EXISTS: True # 是否存在左手

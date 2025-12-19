@@ -58,9 +58,35 @@ class LinkerHandO6Can:
         self.version = None
         # Start the receiving thread
         self.running = True
+        
         self.receive_thread = threading.Thread(target=self.receive_response)
         self.receive_thread.daemon = True
         self.receive_thread.start()
+        time.sleep(0.1)
+        self._check_touch_type()
+
+    def _check_touch_type(self):
+        '''根据SN编码判断压感类型'''
+        self.sn = self.get_serial_number()
+        time.sleep(0.1)
+        if self.sn != "-1":
+            parts = self.sn.split("-")
+            if parts[4] == "A":
+                self.touch_type = 1
+            elif parts[4] == "B":
+                self.touch_type = 2
+                self.touch_code = 0xC6  # 6*12
+            elif parts[4] == "J":
+                self.touch_type = 3
+            elif parts[4] == "F":
+                self.touch_type = 4
+                self.touch_code = 0xA4 # 4*10
+            elif parts[4] == "Z":
+                self.touch_type = -1
+        else:
+            # 如果没有SN编码则根据返回数据进行判断
+            self.touch_type = self.get_touch_type()
+
 
     def init_can_bus(self, channel, baudrate):
         try:
@@ -236,7 +262,7 @@ class LinkerHandO6Can:
                 d = list(response_data)
                 index = self.serial_number_map.get(d[0])
                 if index is not None:
-                    self.serial_number=self.serial_number + d[1:]
+                    self.serial_number += d[1:]
                 else:
                     self.serial_number=self.serial_number + [-1] * 6
                 
@@ -302,40 +328,40 @@ class LinkerHandO6Can:
         return [self.xb1[1],self.xb2[1],self.xb3[1],self.xb4[1],self.xb5[1],0] # The last digit is palm, currently not available
     
     def get_matrix_touch(self):
-        self.send_frame(0xb1,[0xa4],sleep=0.01)
-        self.send_frame(0xb2,[0xa4],sleep=0.01)
-        self.send_frame(0xb3,[0xa4],sleep=0.01)
-        self.send_frame(0xb4,[0xa4],sleep=0.01)
-        self.send_frame(0xb5,[0xa4],sleep=0.01)
+        self.send_frame(0xb1,[self.touch_code],sleep=0.01)
+        self.send_frame(0xb2,[self.touch_code],sleep=0.01)
+        self.send_frame(0xb3,[self.touch_code],sleep=0.01)
+        self.send_frame(0xb4,[self.touch_code],sleep=0.01)
+        self.send_frame(0xb5,[self.touch_code],sleep=0.01)
 
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
     
     def get_matrix_touch_v2(self):
-        self.send_frame(0xb1,[0xa4],sleep=0.009)
-        self.send_frame(0xb2,[0xa4],sleep=0.009)
-        self.send_frame(0xb3,[0xa4],sleep=0.009)
-        self.send_frame(0xb4,[0xa4],sleep=0.009)
-        self.send_frame(0xb5,[0xa4],sleep=0.009)
+        self.send_frame(0xb1,[self.touch_code],sleep=0.009)
+        self.send_frame(0xb2,[self.touch_code],sleep=0.009)
+        self.send_frame(0xb3,[self.touch_code],sleep=0.009)
+        self.send_frame(0xb4,[self.touch_code],sleep=0.009)
+        self.send_frame(0xb5,[self.touch_code],sleep=0.009)
         return self.thumb_matrix , self.index_matrix , self.middle_matrix , self.ring_matrix , self.little_matrix
     
     def get_thumb_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb1,[0xa4],sleep=sleep_time)
+        self.send_frame(0xb1,[self.touch_code],sleep=sleep_time)
         return self.thumb_matrix
     
     def get_index_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb2,[0xa4],sleep=sleep_time)
+        self.send_frame(0xb2,[self.touch_code],sleep=sleep_time)
         return self.index_matrix
     
     def get_middle_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb3,[0xa4],sleep=sleep_time)
+        self.send_frame(0xb3,[self.touch_code],sleep=sleep_time)
         return self.middle_matrix
     
     def get_ring_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb4,[0xa4],sleep=sleep_time)
+        self.send_frame(0xb4,[self.touch_code],sleep=sleep_time)
         return self.ring_matrix
     
     def get_little_matrix_touch(self,sleep_time=0.002):
-        self.send_frame(0xb5,[0xa4],sleep=sleep_time)
+        self.send_frame(0xb5,[self.touch_code],sleep=sleep_time)
         return self.little_matrix
 
     def get_force(self):
