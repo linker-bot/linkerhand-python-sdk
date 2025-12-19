@@ -1,3 +1,7 @@
+release_3.0.2
+1、新增4*10矩阵压感
+
+
 release_3.0.1
 1、支持O6/L6/L10 RS485通讯 pymodbus模式
 
