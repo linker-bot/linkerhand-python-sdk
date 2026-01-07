@@ -72,7 +72,7 @@ class LinkerHandL6Can:
             if sys.platform == "linux":
                 # Linux 优先级：1. socketcan
                 try:
-                    self.open_can.open_can(self_can_channel)
+                    self.open_can.open_can(self.can_channel)
                     # 尝试 socketcan
                     bus = can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
                     ColorMsg(msg=f"成功连接: interface='socketcan', channel='{channel}'", color="green")
