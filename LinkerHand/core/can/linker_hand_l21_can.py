@@ -5,6 +5,8 @@ import threading
 import numpy as np
 from enum import Enum
 from utils.open_can import OpenCan
+from utils.color_msg import ColorMsg
+from can.exceptions import CanError
 current_dir = os.path.dirname(os.path.abspath(__file__))
 target_dir = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(target_dir)
@@ -151,28 +153,72 @@ class LinkerHandL21Can:
             176: 11,
         }
         # Initialize CAN bus according to operating system
-        try:
-            if sys.platform == "linux":
-                self.open_can.open_can(self.can_channel)
-                time.sleep(0.1)
-                self.bus = can.interface.Bus(
-                    channel=can_channel, interface="socketcan", bitrate=baudrate, 
-                    can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-                )
-            elif sys.platform == "win32":
-                self.bus = can.interface.Bus(
-                    channel=can_channel, interface='pcan', bitrate=baudrate, 
-                    can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-                )
-            else:
-                raise EnvironmentError("Unsupported platform for CAN interface")
-        except:
-            print("Please insert CAN device")
+        # try:
+        #     if sys.platform == "linux":
+        #         self.open_can.open_can(self.can_channel)
+        #         time.sleep(0.1)
+        #         self.bus = can.interface.Bus(
+        #             channel=can_channel, interface="socketcan", bitrate=baudrate, 
+        #             can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
+        #         )
+        #     elif sys.platform == "win32":
+        #         self.bus = can.interface.Bus(
+        #             channel=can_channel, interface='pcan', bitrate=baudrate, 
+        #             can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
+        #         )
+        #     else:
+        #         raise EnvironmentError("Unsupported platform for CAN interface")
+        # except:
+        #     print("Please insert CAN device")
+        self.bus = self.init_can_bus(channel=self.can_channel, baudrate=baudrate)
 
         # Start receive thread
         self.receive_thread = threading.Thread(target=self.receive_response)
         self.receive_thread.daemon = True
         self.receive_thread.start()
+
+    def init_can_bus(self, channel, baudrate):
+        """
+        尝试按优先级连接 CAN 总线，并实现回退机制。
+        """
+        # --- 统一异常处理块开始 ---
+        try:
+            if sys.platform == "linux":
+                # Linux 优先级：1. socketcan
+                try:
+                    self.open_can.open_can(self_can_channel)
+                    # 尝试 socketcan
+                    bus = can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
+                    ColorMsg(msg=f"成功连接: interface='socketcan', channel='{channel}'", color="green")
+                    return bus
+                except CanError as e:
+                    # 如果 socketcan 失败，可以考虑在这里尝试其他 Linux 接口 (如 'pcan')
+                    ColorMsg(msg=f"socketcan 接口连接失败: {e}", color="yellow")
+                    raise # 重新抛出异常，让外层 try 捕获
+            elif sys.platform == "win32":
+                # Windows 优先级：1. pcan
+                try:
+                    bus = can.interface.Bus(channel=channel, interface='pcan', bitrate=baudrate)
+                    ColorMsg(msg=f"成功连接: interface='pcan', channel='{channel}'", color="green")
+                    return bus
+                except CanError as e:
+                    ColorMsg(msg=f"pcan 接口连接失败，尝试回退到 'candle': {e}", color="yellow")
+                # Windows 优先级：2. candle (回退方法)
+                try:
+                    bus = can.Bus(interface="candle", channel=channel, bitrate=baudrate)
+                    ColorMsg(msg=f"成功连接: interface='candle', channel='{channel}'", color="green")
+                    return bus
+                except CanError as e:
+                    ColorMsg(msg=f"candle 接口连接失败: {e}", color="yellow")
+                    raise # 两个接口都失败，抛出异常
+            else:
+                raise EnvironmentError("Unsupported platform for CAN interface")
+        # --- 统一异常处理块结束 ---
+        except Exception as e:
+            # 如果任何一个接口尝试失败并抛出异常（包括 EnvironmentError）
+            ColorMsg(msg=f"致命错误：所有 CAN 接口连接尝试均失败或平台不受支持。请检查设备连接或驱动安装和配置文件中CAN参数的配置。\n错误详情: {e}", color="red")
+            # 保持 raise 动作，将错误信息传递给调用者，避免程序继续运行
+            raise
 
     def send_command(self, frame_property, data_list,sleep_time=0.003):
         """
@@ -403,6 +449,8 @@ class LinkerHandL21Can:
         if msg.arbitration_id == self.can_id:
             frame_type = msg.data[0]
             response_data = msg.data[1:]
+            if len(list(response_data)) == 0:
+                return
             if frame_type == 0x01:
                 self.x01 = list(response_data)
             elif frame_type == 0x02:

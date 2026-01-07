@@ -1,9 +1,9 @@
-VERSION: 3.0.2 # 新增4*10矩阵压感
+VERSION: 3.1.0 # 适配新CAN透明盒设备
 LINKER_HAND:  # 手部配置信息
   LEFT_HAND:
     EXISTS: True # 是否存在左手
     TOUCH: True # 是否有压力传感器
-    CAN: "can0"  # 配置CAN端口 默认can0 如果MODUBS不为"None",则CAN配置失效
+    CAN: "can0"  # 配置CAN端口 默认can0 如果MODUBS不为"None",则CAN配置失效。 如果是win系统则类似于 PCAN_USBBUS1。注：蓝色盒子为Linux下can0，WIN下位PCAN_USBBUS1。透明盒子Linux下为can0，WIN下为0
     MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB* CAN配置失效 当前只支持O6/L6.后续版本正在努力增加中
     JOINT: L6 # 左手型号 O6/L6/L7/L10/L20/G20/L21/L25/
     NAME: # 默认值，不用修改
@@ -31,7 +31,7 @@ LINKER_HAND:  # 手部配置信息
   RIGHT_HAND:
     EXISTS: False # 是否存在右手
     TOUCH: False # 是否有压力传感器
-    CAN: "can0"  # 配置CAN端口 默认can0 如果MODUBS不为"None",则CAN配置失效
+    CAN: "can0"  # 配置CAN端口 默认can0 如果MODUBS不为"None",则CAN配置失效。 如果是win系统则类似于 PCAN_USBBUS1。注：蓝色盒子为Linux下can0，WIN下位PCAN_USBBUS1。透明盒子Linux下为can0，WIN下为0
     MODBUS: "None" # 通讯协议是否为485 默认None 如果启动485，则是设备端口 /dev/ttyUSB* CAN配置失效 当前只支持O6/L6.后续版本正在努力增加中
     JOINT: L6 # 右手型号 O6/L6/L7/L10/L20/G20/L21/L25/
     NAME:  # 默认值，不用修改

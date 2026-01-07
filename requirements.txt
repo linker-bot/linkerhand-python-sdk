@@ -1,4 +1,5 @@
 python-can
+python-can-candle
 dm_env
 minimalmodbus
 pymodbus==3.5.1
