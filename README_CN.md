@@ -30,6 +30,9 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 
 ```bash
 $ cd linkerhand-python-sdk/
+# win下需要安装python-can-candle用于适配透明CAN设备candle协议
+$ pip install python-can
+$ pip install python-can-candle
 $ pip3 install -r requirements.txt
 ```
 
@@ -167,6 +170,7 @@ $ python3 example/gui_control/gui_control.py
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
