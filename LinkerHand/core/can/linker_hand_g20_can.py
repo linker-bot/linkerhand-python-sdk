@@ -241,7 +241,7 @@ class LinkerHandG20Can:
                 try:
                     self.open_can.open_can(self.can_channel)
                     # 尝试 socketcan
-                    self.bus = can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
+                    bus = can.interface.Bus(channel=channel, interface="socketcan", bitrate=baudrate)
                     ColorMsg(msg=f"成功连接: interface='socketcan', channel='{channel}'", color="green")
                     return bus
                 except CanError as e:
