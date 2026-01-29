@@ -28,7 +28,10 @@ class GetForce:
         self.touch_type = t
     def get_force(self):
         for i in range(3):
-            touch = self.hand.get_matrix_touch()
+            if self.touch_type != 2 and self.touch_type != -1:
+                touch = self.hand.get_force()
+            else:
+                touch = self.hand.get_matrix_touch()
         print(touch)
 
 if __name__ == "__main__":
