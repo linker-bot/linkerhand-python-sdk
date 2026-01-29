@@ -17,7 +17,7 @@ class GetForce:
         self.touch_type = -1
         self.hand = LinkerHandApi(hand_joint=self.hand_joint,hand_type=self.hand_type)
         self.get_touch_type()
-        self.get_force()
+        self.get_force_data()
     
     def get_touch_type(self):
         t = self.hand.get_touch_type()
@@ -26,13 +26,14 @@ class GetForce:
         elif t == -1:
             ColorMsg(msg="没有压力传感器", color='red')
         self.touch_type = t
-    def get_force(self):
+    def get_force_data(self):
         for i in range(3):
             if self.touch_type != 2 and self.touch_type != -1:
                 touch = self.hand.get_force()
             else:
                 touch = self.hand.get_matrix_touch()
-        print(touch)
+            time.sleep(1)
+            print(touch)
 
 if __name__ == "__main__":
     # python3 get_force.py --hand_joint L10 --hand_type right
