@@ -118,8 +118,8 @@ class LinkerHandL10RS485:
         finger_size = rows * cols  # 72 个数据点
         
         # modbus 地址和计数
-        write_address = 60  # 写入手指选择
-        read_address = 62   # 读取压力数据
+        write_address = 70  # 写入手指选择
+        read_address = 72   # 读取压力数据
         read_count = 96     # 读取 96 个寄存器
         skip_count = 10     # 跳过前 10 个校验点
         
