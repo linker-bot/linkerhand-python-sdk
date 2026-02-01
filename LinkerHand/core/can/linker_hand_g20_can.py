@@ -194,7 +194,13 @@ class LinkerHandG20Can:
         
         # 查询指令数据存储
         self.xC0, self.xC1, self.xC2, self.xC3, self.xC4 = [], [], [], [], []
-        
+        self.serial_number = []
+        self.serial_number_map = {
+            0: 0,
+            1: 1,
+            2: 2,
+            3: 3,
+        }
         # 触觉传感器矩阵数据
         self.thumb_matrix = np.full((12, 6), -1)
         self.index_matrix = np.full((12, 6), -1)
@@ -206,29 +212,34 @@ class LinkerHandG20Can:
             96: 6, 112: 7, 128: 8, 144: 9, 160: 10, 176: 11,
         }
         
-        # # 初始化 CAN 总线
-        # try:
-        #     if sys.platform == "linux":
-        #         self.open_can.open_can(self.can_channel)
-        #         time.sleep(0.1)
-        #         self.bus = can.interface.Bus(
-        #             channel=can_channel, interface="socketcan", bitrate=baudrate, 
-        #             can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-        #         )
-        #     elif sys.platform == "win32":
-        #         self.bus = can.interface.Bus(
-        #             channel=can_channel, interface='pcan', bitrate=baudrate, 
-        #             can_filters=[{"can_id": can_id, "can_mask": 0x7FF}]
-        #         )
-        #     else:
-        #         raise EnvironmentError("Unsupported platform for CAN interface")
-        # except:
-        #     print("Please insert CAN device")
         self.bus = self.init_can_bus(channel=self.can_channel, baudrate=baudrate)
         # 启动接收线程
         self.receive_thread = threading.Thread(target=self.receive_response)
         self.receive_thread.daemon = True
         self.receive_thread.start()
+        self._check_touch_type()
+
+    def _check_touch_type(self):
+        '''根据SN编码判断压感类型'''
+        self.sn = self.get_serial_number()
+        time.sleep(0.1)
+        if self.sn != "-1":
+            parts = self.sn.split("-")
+            if parts[4] == "A":
+                self.touch_type = 1
+            elif parts[4] == "B":
+                self.touch_type = 2
+                self.touch_code = 0xC6  # 6*12
+            elif parts[4] == "J":
+                self.touch_type = 3
+            elif parts[4] == "F":
+                self.touch_type = 4
+                self.touch_code = 0xA4 # 4*10
+            elif parts[4] == "Z":
+                self.touch_type = -1
+        else:
+            # 如果没有SN编码则根据返回数据进行判断
+            self.touch_type = self.get_touch_type()
 
     def init_can_bus(self, channel, baudrate):
         """
@@ -439,7 +450,14 @@ class LinkerHandG20Can:
             elif frame_type == 0xB6: self.xB6 = list(response_data)
             
             # 查询指令响应
-            elif frame_type == 0xC0: self.xC0 = list(response_data)
+            # elif frame_type == 0xC0: self.xC0 = list(response_data)
+            elif frame_type == 0xC0:
+                d = list(response_data)
+                index = self.serial_number_map.get(d[0])
+                if index is not None:
+                    self.serial_number=self.serial_number + d[1:]
+                else:
+                    self.serial_number=self.serial_number + [-1] * 6
             elif frame_type == 0xC1: self.xC1 = list(response_data)
             elif frame_type == 0xC2: self.xC2 = list(response_data)
             elif frame_type == 0xC3: self.xC3 = list(response_data)
@@ -924,7 +942,7 @@ class LinkerHandG20Can:
         """根据手指映射关系，将手指控制命令列表转换为手指分组数据形式"""
         # 定义手指映射规则
         finger_mapping = {
-            '拇指': [5, 10, 0, 11, 12, 15],
+            '拇指': [10, 5, 0, 11, 12, 15],
             '食指': [6, 11, 1, 13, 14, 16],
             '中指': [7, 12, 2, 13, 14, 17],
             '无名指': [8, 13, 3, 14, 15, 18],
@@ -985,6 +1003,20 @@ class LinkerHandG20Can:
             self.running = False
     
     def get_serial_number(self):
-        return [0] * 6
+        try:
+            self.send_command(0xC0,[],sleep_time=0.005)
+            # 1. 使用 bytes() 函数将整数列表转换为字节对象
+            #    bytes() 接收一个由 0-255 之间的整数组成的列表。
+            byte_data = bytes(self.serial_number)
+            # 2. 使用 .decode() 方法将字节对象解码为 ASCII 字符串
+            result_string = byte_data.decode('ascii')
+            if result_string == "":
+                return "-1"
+            else:
+                # print(f"原始 ASCII 码列表: {self.serial_number}")
+                # print(f"解码后的字符串: {result_string}")
+                return result_string
+        except:
+            return "-1"
     def get_finger_order(self):
         return ["Thumb Base", "Index Finger Base", "Middle Finger Base", "Ring Finger Base", "Pinky Finger Base", "Thumb Abduction", "Index Finger Abduction", "Middle Finger Abduction", "Ring Finger Abduction", "Pinky Finger Abduction", "Thumb Horizontal Abduction", "Reserved", "Reserved", "Reserved", "Reserved", "Thumb Tip", "Index Finger Tip", "Middle Finger Tip", "Ring Finger Tip", "Pinky Finger Tip"]
