@@ -76,7 +76,7 @@ class LinkerHandO6Can:
                 self.touch_type = 1
             elif parts[4] == "B":
                 self.touch_type = 2
-                self.touch_code = 0xC6  # 6*12
+                self.touch_code = 0xA4  # 6*12 O6 一律0XA4
             elif parts[4] == "J":
                 self.touch_type = 3
             elif parts[4] == "F":
