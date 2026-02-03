@@ -49,7 +49,7 @@ $ python3 gui_control.py
 
 
 
-## RS485 协议使用 当前支持O6/L6/L10，其他型号灵巧手请参考[官网MODBUS RS485协议文档](https://document.linkeros.cn/developer/90) 注：如不确定协议类型，请咨询技术支持。
+## RS485 协议使用 当前支持O6/L6/L7/L10，其他型号灵巧手请参考[官网MODBUS RS485协议文档](https://document.linkeros.cn/developer/90) 注：如不确定协议类型，请咨询技术支持。
 
 编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改,将MODBUS:"/dev/ttyUSB0"，配置文件中"modbus"参数为"/dev/ttyUSB0"。USB-RS485转换器在Ubuntu上一般显示为/dev/ttyUSB* or /dev/ttyACM*
 modbus: "None" or "/dev/ttyUSB0"
@@ -170,6 +170,7 @@ $ python3 example/gui_control/gui_control.py
 
 ## API 说明文档
 [Linker Hand API for Python Document](doc/API-Reference.md)
+
 
 
 
