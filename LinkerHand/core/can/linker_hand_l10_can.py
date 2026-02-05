@@ -131,7 +131,7 @@ class LinkerHandL10Can:
             # 保持 raise 动作，将错误信息传递给调用者，避免程序继续运行
             raise
 
-    def send_frame(self, frame_property, data_list,sleep=0.003):
+    def send_frame(self, frame_property, data_list,sleep=0.002):
         """Send a single CAN frame with specified properties and data."""
         frame_property_value = int(frame_property.value) if hasattr(frame_property, 'value') else frame_property
         data = [frame_property_value] + [int(val) for val in data_list]
@@ -158,9 +158,9 @@ class LinkerHandL10Can:
         self.is_cmd = True
         # Send angle control in frames, L10 protocol splits into first 6 and last 4
         self.send_frame(FrameProperty.JOINT_POSITION2_RCO, self.joint_angles[6:])
-        time.sleep(0.001)
+        #time.sleep(0.001)
         self.send_frame(FrameProperty.JOINT_POSITION_RCO, self.joint_angles[:6])
-        time.sleep(0.002)
+        #time.sleep(0.002)
         self.is_cmd = False
         
 

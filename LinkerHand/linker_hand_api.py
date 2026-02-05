@@ -14,6 +14,7 @@ class LinkerHandApi:
         self.config = self.yaml.load_setting_yaml()
         self.version = self.config["VERSION"]
         self.can = can
+        self.modbus = modbus
         ColorMsg(msg=f"Current SDK version: {self.version}", color="green")
         self.hand_joint = hand_joint
         self.hand_type = hand_type
@@ -335,10 +336,10 @@ class LinkerHandApi:
     
     def show_fun_table(self):
         self.hand.show_fun_table()
-
+        
     def close_can(self):
-        if sys.platform == "linux" and modbus=="None":
-            self.open_can.close_can(can=self.can)
+        if sys.platform == "linux" and self.modbus=="None":
+            self.open_can.close_can(can=self.can)                         
 
 if __name__ == "__main__":
     hand = LinkerHandApi(hand_type="right", hand_joint="L10")
