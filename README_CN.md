@@ -19,7 +19,7 @@
 | ROS2 SDK | ![SDK Version](https://img.shields.io/badge/SDK%20Version-V3.0.1-brightgreen?style=flat-square) ![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white) ![Ubuntu 24.04](https://img.shields.io/badge/OS-Ubuntu%2024.04-E95420?style=flat-square&logo=ubuntu&logoColor=white) ![ROS 2 Jazzy](https://img.shields.io/badge/ROS%202-Jazzy-00B3E6?style=flat-square&logo=ros) ![Windows 11](https://img.shields.io/badge/OS-Windows%2011-0078D4?style=flat-square&logo=windows&logoColor=white) | [![GitHub 仓库](https://img.shields.io/badge/GitHub-grey?logo=github&style=flat-square)](https://github.com/linker-bot/linkerhand-ros2-sdk) |
 
 ## Installation
-&ensp;&ensp;您可以在安装requirements.txt后的情况下运行示例。仅支持 Python3。
+&ensp;&ensp;您可以通过 `pyproject.toml` 安装 SDK 及其依赖后运行示例。仅支持 Python3。
 - download
 
 ```bash
@@ -30,10 +30,7 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 
 ```bash
 $ cd linkerhand-python-sdk/
-# win下需要安装python-can-candle用于适配透明CAN设备candle协议
-$ pip install python-can
-$ pip install python-can-candle
-$ pip3 install -r requirements.txt
+$ pip install -e .
 ```
 
 - 快速使用示例 by CAN
@@ -54,7 +51,7 @@ $ python3 gui_control.py
 编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改,将MODBUS:"/dev/ttyUSB0"，配置文件中"modbus"参数为"/dev/ttyUSB0"。USB-RS485转换器在Ubuntu上一般显示为/dev/ttyUSB* or /dev/ttyACM*
 modbus: "None" or "/dev/ttyUSB0"
 ```bash
-# 确保requirements.txt安装依赖
+# 确保已通过 pyproject.toml 安装 SDK 及依赖
 # 安装系统级相关驱动
 $ pip install minimalmodbus --break-system-packages
 $ pip install pyserial --break-system-packages
