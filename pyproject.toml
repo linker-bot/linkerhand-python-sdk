@@ -14,25 +14,30 @@ authors = [
 dependencies = [
     "python-can",
     "python-can-candle",
-    "dm-env",
-    "minimalmodbus",
     "pymodbus==3.5.1",
     "pyserial",
-    "pexpect",
-    "pyquaternion",
-    "pyagxrobots",
-    "pycryptodome",
-    "ipython",
-    "h5py",
+    "numpy",
     "PyYAML",
-    "tqdm",
-    "wandb",
-    "mediapipe",
+]
+
+[project.optional-dependencies]
+all = [
     "PyQt5",
     "pyqtgraph",
-    "dm-control",
-    "uvicorn",
     "matplotlib",
+    "dm-control",
+    "dm-env",
+    "pyagxrobots",
+    "pyquaternion",
+    "h5py",
+    "ipython",
+    "mediapipe",
+    "minimalmodbus",
+    "pexpect",
+    "pycryptodome",
+    "tqdm",
+    "uvicorn",
+    "wandb",
 ]
 
 [project.urls]

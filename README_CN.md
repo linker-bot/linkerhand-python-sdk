@@ -30,7 +30,7 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 
 ```bash
 $ cd linkerhand-python-sdk/
-$ pip install -e .
+$ pip install -e ".[all]"
 ```
 
 - 快速使用示例 by CAN
@@ -52,10 +52,7 @@ $ python3 gui_control.py
 modbus: "None" or "/dev/ttyUSB0"
 ```bash
 # 确保已通过 pyproject.toml 安装 SDK 及依赖
-# 安装系统级相关驱动
-$ pip install minimalmodbus --break-system-packages
-$ pip install pyserial --break-system-packages
-$ pip install pymodbus --break-system-packages
+$ pip install -e ".[all]"
 # 查看USB-RS485端口号
 $ ls /dev
 # 可以看到类似ttyUSB0端口后给端口执行权限

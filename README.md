@@ -31,7 +31,7 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 
 ```bash
 $ cd linkerhand-python-sdk/
-$ pip install -e .
+$ pip install -e ".[all]"
 ```
 
 - 快速使用示例 by CAN
@@ -51,10 +51,7 @@ Edit the config/setting.yaml configuration file and modify the parameters accord
 modbus: "None" or "/dev/ttyUSB0"
 ```bash
 # Ensure the SDK and dependencies are installed from pyproject.toml
-# Install system-level related drivers
-$ pip install minimalmodbus --break-system-packages
-$ pip install pyserial --break-system-packages
-$ pip install pymodbus --break-system-packages
+$ pip install -e ".[all]"
 # View the USB-RS485 port number
 $ ls /dev
 # You should see a port similar to ttyUSB0. Grant permissions to the port:
@@ -153,5 +150,4 @@ When launched, a UI interface will pop up. You can control the corresponding Lin
 
 ## API Documentation
 [Linker Hand API for Python Document](doc/API-Reference.md)
-
 
