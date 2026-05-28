@@ -20,7 +20,7 @@ LinkerHand Python SDK
 
 
 ## Installation
-&ensp;&ensp;You can run the examples after installing the dependencies in requirements.txt. Only Python 3 is supported.
+&ensp;&ensp;You can run the examples after installing the SDK and dependencies from `pyproject.toml`. Only Python 3 is supported.
 - download
 
 ```bash
@@ -31,7 +31,7 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 
 ```bash
 $ cd linkerhand-python-sdk/
-$ pip3 install -r requirements.txt
+$ pip install -e ".[all]"
 ```
 
 - 快速使用示例 by CAN
@@ -50,11 +50,8 @@ $ python3 gui_control.py
 Edit the config/setting.yaml configuration file and modify the parameters according to the comments inside. Set MODBUS: "/dev/ttyUSB0", meaning the "modbus" parameter in the configuration file should be "/dev/ttyUSB0". The USB-RS485 converter usually appears as /dev/ttyUSB* or /dev/ttyACM* on Ubuntu. 
 modbus: "None" or "/dev/ttyUSB0"
 ```bash
-# Ensure requirements.txt dependencies are installed
-# Install system-level related drivers
-$ pip install minimalmodbus --break-system-packages
-$ pip install pyserial --break-system-packages
-$ pip install pymodbus --break-system-packages
+# Ensure the SDK and dependencies are installed from pyproject.toml
+$ pip install -e ".[all]"
 # View the USB-RS485 port number
 $ ls /dev
 # You should see a port similar to ttyUSB0. Grant permissions to the port:
@@ -153,6 +150,4 @@ When launched, a UI interface will pop up. You can control the corresponding Lin
 
 ## API Documentation
 [Linker Hand API for Python Document](doc/API-Reference.md)
-
-
 

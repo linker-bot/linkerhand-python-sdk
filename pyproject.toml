@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "linkerhand-python-sdk"
+version = "3.1.0"
+description = "Python SDK for LinkerHand dexterous hands."
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    { name = "Linker Hand" },
+]
+dependencies = [
+    "python-can",
+    "python-can-candle",
+    "pymodbus==3.5.1",
+    "pyserial",
+    "numpy",
+    "PyYAML",
+]
+
+[project.optional-dependencies]
+all = [
+    "PyQt5",
+    "pyqtgraph",
+    "matplotlib",
+    "dm-control",
+    "dm-env",
+    "pyagxrobots",
+    "pyquaternion",
+    "h5py",
+    "ipython",
+    "mediapipe",
+    "minimalmodbus",
+    "pexpect",
+    "pycryptodome",
+    "tqdm",
+    "uvicorn",
+    "wandb",
+]
+
+[project.urls]
+Homepage = "https://github.com/linker-bot/linkerhand-python-sdk"
+Documentation = "https://github.com/linker-bot/linkerhand-python-sdk/blob/main/doc/API-Reference.md"
+
+[tool.setuptools.packages.find]
+include = ["LinkerHand*"]
+
+[tool.setuptools.package-data]
+"LinkerHand.config" = ["*.yaml"]
