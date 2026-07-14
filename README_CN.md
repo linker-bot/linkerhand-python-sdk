@@ -29,21 +29,21 @@ $ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 - install
 
 ```bash
-$ cd linkerhand-python-sdk/
+cd linkerhand-python-sdk/
 # win下需要安装python-can-candle用于适配透明CAN设备candle协议
-$ pip install python-can
-$ pip install python-can-candle
-$ pip3 install -r requirements.txt
+pip install python-can
+pip install python-can-candle
+pip3 install -r requirements.txt
 ```
 
 - 快速使用示例 by CAN
 编辑config/setting.yaml配置文件，按照配置文件内注释说明进行参数修改,配置CAN: "can0"(根据实际硬件情况来确定，一般第一个为can0)，配置MODBUS:"None"
 ```bash
 # Open the CAN port
-$ sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 # USB-to-CAN device blue light stays solid. This step can be skipped on Ubuntu systems after modifying setting.ymal as required.
-$ cd examples/gui_control
-$ sudo chmod a+x gui_control.py
-$ python3 gui_control.py
+sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 # USB-to-CAN device blue light stays solid. This step can be skipped on Ubuntu systems after modifying setting.ymal as required.
+cd example/gui_control
+sudo chmod a+x gui_control.py
+python3 gui_control.py
 ```
 <img  src="doc/gui.png" width="400">
 
@@ -56,15 +56,15 @@ modbus: "None" or "/dev/ttyUSB0"
 ```bash
 # 确保requirements.txt安装依赖
 # 安装系统级相关驱动
-$ pip install minimalmodbus --break-system-packages
-$ pip install pyserial --break-system-packages
-$ pip install pymodbus --break-system-packages
+pip install minimalmodbus --break-system-packages
+pip install pyserial --break-system-packages
+pip install pymodbus --break-system-packages
 # 查看USB-RS485端口号
-$ ls /dev
+ls /dev
 # 可以看到类似ttyUSB0端口后给端口执行权限
-$ sudo chmod 777 /dev/ttyUSB0
+sudo chmod 777 /dev/ttyUSB0
 # GUI控制示例
-$ python3 example/gui_control/gui_control.py
+python3 example/gui_control/gui_control.py
 
 ```
 
