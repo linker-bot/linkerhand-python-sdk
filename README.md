@@ -24,24 +24,24 @@ LinkerHand Python SDK
 - download
 
 ```bash
-$ git clone https://github.com/linker-bot/linkerhand-python-sdk.git
+git clone https://github.com/linker-bot/linkerhand-python-sdk.git
 ```
 
 - install
 
 ```bash
-$ cd linkerhand-python-sdk/
-$ pip3 install -r requirements.txt
+cd linkerhand-python-sdk/
+pip3 install -r requirements.txt
 ```
 
-- 快速使用示例 by CAN
+- Quick Start Example via CAN
 Edit the config/setting.yaml configuration file and modify the parameters according to the comments inside. Set CAN:"can0" and Set MODBUS: "None"
 ```bash
 # Open the CAN port
-$ sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 # USB-to-CAN device blue light stays solid. This step can be skipped on Ubuntu systems after modifying setting.ymal as required.
-$ cd examples/gui_control
-$ sudo chmod a+x gui_control.py
-$ python3 gui_control.py
+sudo /usr/sbin/ip link set can0 up type can bitrate 1000000 # USB-to-CAN device blue light stays solid. This step can be skipped on Ubuntu systems after modifying setting.ymal as required.
+cd example/gui_control
+sudo chmod a+x gui_control.py
+python3 gui_control.py
 ```
 <img  src="doc/gui.png" width="400">
 
