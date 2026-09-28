@@ -48,7 +48,13 @@ class LinkerHandO6Can:
             1: 1,
             2: 2,
             3: 3,
+            6: 1, 12: 2,
         }
+        self._sn_fragments = {}
+        self._sn_invalid = False
+        self._sn_last_update = None
+        self._sn_lock = threading.Lock()
+        self._sn_event = threading.Event()
         # Fault codes
         
         self.joint_angles = [0] * 6
@@ -72,6 +78,11 @@ class LinkerHandO6Can:
         time.sleep(0.1)
         if self.sn != "-1":
             parts = self.sn.split("-")
+            if len(parts) < 5:
+                print(f"O6 SN 未收全: {self.sn!r}, parts={parts!r}")
+                self.sn = "-1"
+                self.touch_type = self.get_touch_type()
+                return
             if parts[4] == "A":
                 self.touch_type = 1
             elif parts[4] == "B":
@@ -295,10 +306,15 @@ class LinkerHandO6Can:
             elif frame_type == 0xC0:
                 d = list(response_data)
                 index = self.serial_number_map.get(d[0])
-                if index is not None:
-                    self.serial_number += d[1:]
-                else:
-                    self.serial_number=self.serial_number + [-1] * 6
+                with self._sn_lock:
+                    if index is not None:
+                        # Place each fragment at its own slot instead of appending in arrival order,
+                        # since CAN frames from two hands sharing a bus can interleave.
+                        self._sn_fragments[index] = d[1:]
+                    else:
+                        self._sn_invalid = True
+                    self._sn_last_update = time.monotonic()
+                    self._sn_event.set()
                 
 
 
@@ -421,9 +437,35 @@ class LinkerHandO6Can:
     def show_fun_table(self):
         pass
 
-    def get_serial_number(self):
+    def get_serial_number(self, timeout=0.5, quiet_period=0.08):
+        # Reset fragment state before each request so stale data from a previous
+        # call (or the other hand sharing the bus) can't leak into this assembly.
+        with self._sn_lock:
+            self._sn_fragments = {}
+            self._sn_invalid = False
+            self._sn_last_update = None
+            self._sn_event.clear()
         try:
-            self.send_frame(0xC0,[],sleep=0.005)
+            self.send_frame(0xC0, [], sleep=0.005)
+            # Firmware variants send a different number of fragments, so instead of
+            # waiting for a fixed count, keep polling until nothing new has arrived
+            # for `quiet_period`, or the overall `timeout` is exceeded.
+            deadline = time.monotonic() + timeout
+            while time.monotonic() < deadline:
+                self._sn_event.wait(timeout=0.05)
+                self._sn_event.clear()
+                with self._sn_lock:
+                    invalid = self._sn_invalid
+                    last_update = self._sn_last_update
+                    has_data = bool(self._sn_fragments)
+                if invalid:
+                    break
+                if has_data and last_update is not None and (time.monotonic() - last_update) >= quiet_period:
+                    break
+            with self._sn_lock:
+                if self._sn_invalid or not self._sn_fragments:
+                    return "-1"
+                self.serial_number = [b for i in sorted(self._sn_fragments) for b in self._sn_fragments[i]]
             # 1. 使用 bytes() 函数将整数列表转换为字节对象
             #    bytes() 接收一个由 0-255 之间的整数组成的列表。
             byte_data = bytes(self.serial_number)
